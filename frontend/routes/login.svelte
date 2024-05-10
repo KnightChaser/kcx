@@ -37,9 +37,14 @@
                 title: 'Success',
                 text: `Welcome back, ${user.username}!`,
                 icon: 'success',
-                confirmButtonText: 'OK'
+                confirmButtonText: 'OK',
+                allowOutsideClick: false
+            }).then((result) => {
+                // redirect to the home page
+                if (result.isConfirmed) {
+                    push('/');
+                }
             });
-            push('/'); // redirect to home on success
         } catch (error) {
             errorMessage = error.message;
         }

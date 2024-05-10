@@ -16,12 +16,14 @@ import os
 async def lifespan(app: FastAPI):
     console:Console = Console() 
 
+    # Load environment variables. So, we can use them in the application-wide
+    load_dotenv()
+    
     # Create all tables in the database
     from database import Base, engine
     Base.metadata.create_all(bind=engine)
 
     # Create a test account if it doesn't exist
-    load_dotenv()
     test_account_id     = os.getenv("TEST_ACCOUNT_ID", "test")
     test_account_pw     = os.getenv("TEST_ACCOUNT_PW", "test")
     test_account_pw     = password_hash(test_account_pw)

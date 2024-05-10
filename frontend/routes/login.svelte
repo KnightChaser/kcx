@@ -1,6 +1,7 @@
 <script>
     import { push } from "svelte-spa-router";
     import { onMount } from "svelte";
+    import { auth } from "../src/stores/auth.js";
     import Swal from "sweetalert2";
     
     let username = "";
@@ -33,18 +34,23 @@
             }
 
             const user = await response.json();
-            Swal.fire({
-                title: 'Success',
-                text: `Welcome back, ${user.username}!`,
-                icon: 'success',
-                confirmButtonText: 'OK',
-                allowOutsideClick: false
-            }).then((result) => {
-                // redirect to the home page
-                if (result.isConfirmed) {
-                    push('/');
-                }
-            });
+            if (response.status === 200) {
+                Swal.fire({
+                    title: 'Success',
+                    text: `Welcome back, ${username}!`,
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    allowOutsideClick: false
+                }).then((result) => {
+                    // Save the JWT token to the local storage
+                    auth.login(user.access_token);
+                    
+                    // redirect to the home page
+                    if (result.isConfirmed) {
+                        push('/');
+                    }
+                });
+            }
         } catch (error) {
             errorMessage = error.message;
         }

@@ -1,0 +1,6 @@
+fastapi==0.111.0
+pydantic==2.7.1
+python-dotenv==1.0.1
+python_bcrypt==0.3.2
+rich==13.7.1
+SQLAlchemy==2.0.29

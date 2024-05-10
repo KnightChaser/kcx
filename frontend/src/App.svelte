@@ -1,27 +1,18 @@
 <script>
-    let username = "";
-    let password = "";
-
-    // Handle login
-    async function handleLogin() {
-        let response = await fetch("http://localhost:8000/account/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ username, password }),
-        });
-
-        if (response.ok) {
-            let data = await response.json();
-            alert(`Welcome ${data.username}`);
-        } else {
-            alert("Invalid credentials");
-        }
-    }
+    import Router from 'svelte-spa-router';
+    import Header from '../routes/header.svelte';
+    import 'bootstrap/dist/css/bootstrap.min.css'
+    import 'bootstrap/dist/js/bootstrap.min.js'
 </script>
 
-<h1>Login</h1>
-<input type="text" bind:value={username} placeholder="Username" />
-<input type="password" bind:value={password} placeholder="Password" />
-<button on:click={handleLogin}>Login</button>
+<main>
+    <!-- Header component included to appear on all pages -->
+    <Header />
+</main>
+
+<style>
+    main {
+        display: flex;
+        flex-direction: column;
+    }
+</style>

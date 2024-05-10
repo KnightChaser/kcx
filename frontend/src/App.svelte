@@ -1,13 +1,20 @@
 <script>
     import Router from 'svelte-spa-router';
     import Header from '../routes/header.svelte';
-    import 'bootstrap/dist/css/bootstrap.min.css'
-    import 'bootstrap/dist/js/bootstrap.min.js'
+    import Login from '../routes/login.svelte';
+    // import Register from '../routes/register.svelte';
+    import 'bootstrap/dist/css/bootstrap.min.css';
+    import 'bootstrap/dist/js/bootstrap.min.js';
+
+    const routes = {
+        '/login': Login,
+        // '/register': Register
+    };
 </script>
 
 <main>
-    <!-- Header component included to appear on all pages -->
     <Header />
+    <Router {routes} />
 </main>
 
 <style>

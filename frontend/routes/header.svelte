@@ -17,15 +17,15 @@
         <div class="d-flex justify-content-end" style="width: 100%;">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="#/" on:click|preventDefault={() => moveToAnotherPage('/')}
+                    <a class="nav-link" href="/" on:click|preventDefault={() => moveToAnotherPage('/')}
                        tabindex="0">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#/login" on:click|preventDefault={() => moveToAnotherPage('/login')}
+                    <a class="nav-link" href="/login" on:click|preventDefault={() => moveToAnotherPage('/login')}
                        tabindex="0">Login</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#/register" on:click|preventDefault={() => moveToAnotherPage('/register')}
+                    <a class="nav-link" href="/register" on:click|preventDefault={() => moveToAnotherPage('/register')}
                        tabindex="0">Register</a>
                 </li>
             </ul>

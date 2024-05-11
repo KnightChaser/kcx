@@ -1,22 +1,22 @@
 # schemas.py
 # database schema classes for FastAPI
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, FiniteFloat
 
 # User registration schema
-class UserRegistration(BaseModel):
+class UserRegistrationSchema(BaseModel):
     username: str
     email: EmailStr
     password: str
 
 # User login schema
-class Login(BaseModel):
+class LoginSchema(BaseModel):
     username: str
     password: str
 
 # User balance schema
-class Balance(BaseModel):
-    KRW: float
-    BTC: float
-    ETH: float
-    XRP: float
+class BalanceSchema(BaseModel):
+    KRW: FiniteFloat
+    BTC: FiniteFloat
+    ETH: FiniteFloat
+    XRP: FiniteFloat

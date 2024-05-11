@@ -9,6 +9,7 @@ from typing import Dict, Union
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+# Authorization: `Bearer ${localStorage.getItem("token")}`, where the token is a JWT token
 def get_current_user(token:str = Depends(oauth2_scheme)) -> Union[HTTPException, str]:
     try:
         payload:Dict = jwt.decode(token, os.getenv("JWT_SECRET_KEY"), algorithms=["HS256"])

@@ -1,3 +1,4 @@
 __pycache__
 kcx.db
 *.db
+*.db-journal

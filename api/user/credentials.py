@@ -3,8 +3,8 @@
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from schemas import Login, UserRegistration
-from typing import Dict
+from schemas import LoginSchema, UserRegistrationSchema
+from typing import Dict, Union
 import datetime
 import jwt
 import os
@@ -17,7 +17,7 @@ from api.user.password import password_hash, password_verify
 from database_session import get_db
 
 # Create a JWT token (access token) for the user who logged in
-def create_access_token(data: Dict, secret_key:str = None, expires_delta: datetime.timedelta = None):
+def create_access_token(data: Dict, secret_key:str = None, expires_delta: datetime.timedelta = None) -> str:
     # Check if the secret key is provided
     if not secret_key:
         raise ValueError("Secret key is missing")
@@ -32,11 +32,19 @@ def create_access_token(data: Dict, secret_key:str = None, expires_delta: dateti
     encoded_jwt: str = jwt.encode(to_encode, secret_key, algorithm="HS256")
     return encoded_jwt
 
-router = APIRouter()
+# Get the user ID by the username (since the username is unique)
+# For internal use only
+def get_user_id_by_username(username:str, db:Session) -> Union[int | None]:
+    user = db.query(User).filter(User.username == username).first()
+    if not user:
+        return None
+    return user.id
+
+router:APIRouter = APIRouter()
 
 # Login router
 @router.post("/account/login/")
-def login(login: Login, db: Session = Depends(get_db)) -> Dict:
+def login(login: LoginSchema, db: Session = Depends(get_db)) -> Dict:
     # Check if the login information is arrived without any missing fields
     if not login.username or not login.password:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username or password is missing")
@@ -50,7 +58,11 @@ def login(login: Login, db: Session = Depends(get_db)) -> Dict:
     # Login successful, send the user information
     secret_key:str = os.getenv("JWT_SECRET_KEY")
     access_token_expires_in:int = int(os.getenv("JWT_TOKEN_EXPIRES_MINUTES"))
-    access_token = create_access_token(data={"sub": user.username}, 
+    access_token = create_access_token(data={"sub": {
+                                                "id": user.id, 
+                                                "username": user.username, 
+                                                "email": user.email
+                                            }}, 
                                        secret_key=secret_key, 
                                        expires_delta=datetime.timedelta(minutes=access_token_expires_in))
     return {"access_token": access_token, 
@@ -60,7 +72,7 @@ def login(login: Login, db: Session = Depends(get_db)) -> Dict:
 
 # Register router
 @router.post("/account/register/")
-def register(user: UserRegistration, db: Session = Depends(get_db)) -> Dict:
+def register(user: UserRegistrationSchema, db: Session = Depends(get_db)) -> Dict:
     # Check if the registration information is arrived without any missing fields
     if not user.username or not user.email or not user.password:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username, email, or password is missing")

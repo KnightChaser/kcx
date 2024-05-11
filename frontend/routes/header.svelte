@@ -48,6 +48,14 @@
                         <a class="nav-link" href="/logout" on:click|preventDefault={() => moveToAnotherPage('/logout')}
                            tabindex="0">Logout</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/user/main" on:click|preventDefault={() => moveToAnotherPage('/user/main')}
+                           tabindex="0">My page</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/exchange/main" on:click|preventDefault={() => moveToAnotherPage('/exchange/main')}
+                           tabindex="0">Exchange</a>
+                    </li>
                 {:else}
                     <li class="nav-item">
                         <a class="nav-link" href="/login" on:click|preventDefault={() => moveToAnotherPage('/login')}

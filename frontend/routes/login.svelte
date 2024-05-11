@@ -47,7 +47,8 @@
                     
                     // redirect to the home page
                     if (result.isConfirmed) {
-                        push('/');
+                        // Move to the exchange page
+                        push('/exchange/main');
                     }
                 });
             }

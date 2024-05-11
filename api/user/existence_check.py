@@ -2,8 +2,6 @@
 # Check if the user exists in the database, based on the given criteria
 # Internal use purposes only
 
-from fastapi import Depends
-from sqlalchemy.orm import Session
 from database import SessionLocal 
 
 # Note that those packages are located in the parent directory

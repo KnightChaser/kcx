@@ -47,6 +47,18 @@ async def lifespan(app: FastAPI):
         db.refresh(new_user)
         db.close()
         console.log(f"Test account created because it didn't exist")
+
+        # Manully insert the balance for the test account
+        from models import Balance
+        db = SessionLocal()
+        new_balance = Balance(user_id = new_user.id,
+                              KRW = 1000000)
+        db.add(new_balance)
+        db.commit()
+        db.refresh(new_balance)
+        db.close()
+        console.log(f"Test account balance created")
+
         yield
 
 

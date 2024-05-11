@@ -12,7 +12,7 @@ import os
 # Note that those packages are located in the parent directory
 import sys
 sys.path.append("..")
-from models import User
+from models import User, Balance
 from api.user.password import password_hash, password_verify
 from database_session import get_db
 
@@ -83,6 +83,18 @@ def register(user: UserRegistration, db: Session = Depends(get_db)) -> Dict:
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
+
+    # Registration successful, charge initial fund 1,000,000 KRW to the user's account
+    # Note that the initial fund is only for demonstration purposes
+    new_balance = Balance(
+        user_id=new_user.id,
+        KRW=1000000
+    )
+    db.add(new_balance)
+    db.commit()
+    db.refresh(new_balance)
+
+    # Send the user information
     return {"id": new_user.id, 
             "username": new_user.username, 
             "email": new_user.email, 

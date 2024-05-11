@@ -61,12 +61,11 @@
                         <a class="nav-link" href="/login" on:click|preventDefault={() => moveToAnotherPage('/login')}
                            tabindex="0">Login</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/register" on:click|preventDefault={() => moveToAnotherPage('/register')}
+                           tabindex="0">Register</a>
+                    </li>
                 {/if}
-                
-                <li class="nav-item">
-                    <a class="nav-link" href="/register" on:click|preventDefault={() => moveToAnotherPage('/register')}
-                       tabindex="0">Register</a>
-                </li>
             </ul>
         </div>
     </div>

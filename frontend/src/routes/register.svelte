@@ -10,6 +10,7 @@
     let password = "";
     let confirmPassword = "";
     let acceptTerms = false;
+    const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL;
 
     const submitForm = async () => {
         if (password !== confirmPassword) {
@@ -30,7 +31,7 @@
         }
 
         const response = await fetch(
-            "http://localhost:8000/account/register/",
+            `${BACKEND_API_URL}/account/register`,
             {
                 method: "POST",
                 headers: {

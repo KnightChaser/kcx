@@ -7,10 +7,11 @@
     let username = "";
     let password = "";
     let errorMessage = "";
+    const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL;
 
     async function login() {
         try {
-            const response = await fetch('http://localhost:8000/account/login/', {
+            const response = await fetch(`${BACKEND_API_URL}/account/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -155,7 +155,7 @@
             <div class="flex-1"></div> <!-- This is to push the text to the right -->
             <div class="text-right">
                 <!-- Total asset value in KRW -->
-                
+                <p class="text-2xl mb-1"><b>{Math.round($totalKRW.KRW).toLocaleString()}</b> KRW</p> 
                 <!-- Total asset value in BTC -->
                 <p class="text-sm text-blue-500">≈ <b>{$totalKRW.BTC.toFixed(8).toLocaleString()}</b> BTC</p>
             </div>
@@ -173,7 +173,7 @@
                     <h4 class="font-semibold">{currency}</h4>
                 </div>
                 <!-- Asset amount -->
-                <p class="text-lg mb-1 text-right">{currency === 'KRW' ? amount.toLocaleString() : amount.toLocaleString()} {currency}</p>
+                <p class="text-lg mb-1 text-right">{currency === 'KRW' ? amount.toLocaleString() : amount.toFixed(8).toLocaleString()} {currency}</p>
                 <!-- Estimated value -->
                 {#if currency !== 'KRW'}
                     <p class="text-sm text-blue-500 text-right">≈ <b>{Math.round(estimatedValue).toLocaleString()}</b> KRW</p>

@@ -53,7 +53,10 @@ def login(login: Login, db: Session = Depends(get_db)) -> Dict:
     access_token = create_access_token(data={"sub": user.username}, 
                                        secret_key=secret_key, 
                                        expires_delta=datetime.timedelta(minutes=access_token_expires_in))
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, 
+            "token_type": "bearer",
+            "username": user.username,
+            "email": user.email}
 
 # Register router
 @router.post("/account/register/")
@@ -80,4 +83,7 @@ def register(user: UserRegistration, db: Session = Depends(get_db)) -> Dict:
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    return {"id": new_user.id, "username": new_user.username, "email": new_user.email, "created_at": new_user.created_at}
+    return {"id": new_user.id, 
+            "username": new_user.username, 
+            "email": new_user.email, 
+            "created_at": new_user.created_at}

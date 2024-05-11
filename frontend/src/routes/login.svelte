@@ -44,6 +44,8 @@
                 }).then((result) => {
                     // Save the JWT token to the local storage
                     auth.login(user.access_token);
+                    localStorage.setItem('username', username);
+                    localStorage.setItem('email', user.email);
                     
                     // redirect to the home page
                     if (result.isConfirmed) {

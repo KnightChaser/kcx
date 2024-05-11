@@ -2,7 +2,7 @@
 <script>
     import { onMount } from 'svelte';
     import { push } from "svelte-spa-router";
-    import { auth } from "../src/stores/auth.js";
+    import { auth } from "../stores/auth.js";
     import Swal from "sweetalert2";
 
     onMount(() => {

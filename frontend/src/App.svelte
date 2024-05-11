@@ -1,44 +1,47 @@
 <script>
-    import Router, { location } from 'svelte-spa-router';
-    import Header from '../routes/header.svelte';
-    import Welcome from '../routes/welcome.svelte';
-    import Login from '../routes/login.svelte';
-    import Logout from '../routes/logout.svelte';
-    // import Register from '../routes/register.svelte';
-    import ExchangeMain from '../routes/exchange/main.svelte';
-    import MyPage from '../routes/user/main.svelte';
-    import NotFound from '../routes/error/notfound.svelte';
-
-    import 'bootstrap/dist/css/bootstrap.min.css';
-    import 'bootstrap/dist/js/bootstrap.min.js';
-
-    import { auth } from '../src/stores/auth.js'
+    import Header from './routes/header.svelte';
+    import Welcome from './routes/welcome.svelte';
+    import NotFound from './routes/error/notfound.svelte';
+    import Router from 'svelte-spa-router';
+    import wrap from 'svelte-spa-router/wrap';
+    import { auth } from '../src/stores/auth.js';
     import { onMount } from 'svelte';
-
+    
+    import "bootstrap/dist/css/bootstrap.min.css"
+    import "bootstrap/dist/js/bootstrap.js"
+    
     onMount(() => {
         // Check authentication status when the component mounts
         auth.check();
     });
 
+    // Setup routes with immediate and lazy-loaded components
     const routes = {
-        '/': Welcome,  // Ensure there's a route for '/'
-        '/login': Login,
-        '/logout': Logout,
-        // '/register': Register
-        '/exchange/main': ExchangeMain,
-        '/user/main': MyPage,
-        '*': NotFound
+        '/': Welcome,  // Load immediately
+        '/login': wrap({
+            asyncComponent: () => import('./routes/login.svelte'),
+            conditions: [() => !$auth]  // Only show if not logged in
+        }),
+        '/logout': wrap({
+            asyncComponent: () => import('./routes/logout.svelte'),
+            conditions: [() => $auth]  // Only show if logged in
+        }),
+        '/exchange/main': wrap({
+            asyncComponent: () => import('./routes/exchange/main.svelte'),
+            conditions: [() => $auth]  // Ensure authenticated
+        }),
+        '/user/main': wrap({
+            asyncComponent: () => import('./routes/user/main.svelte'),
+            conditions: [() => $auth]  // Ensure authenticated
+        }),
+        '*': NotFound  // Load immediately
     };
 </script>
 
 <main>
-    <Header />
-    <Router {routes} />
-    <!-- Reactively show Welcome component -->
+    <Header />  <!-- Always visible and loaded immediately -->
     <body>
-    {#if !$auth && $location === '/'}
-        <Welcome />
-    {/if}
+        <Router {routes} />
     </body>
 </main>
 

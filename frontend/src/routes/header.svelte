@@ -1,6 +1,6 @@
 <!-- The common header bar that will be added to service-wide  -->
 <script>
-    import { auth } from '../src/stores/auth.js'
+    import { auth } from '../stores/auth.js';
     import { onMount, onDestroy } from 'svelte';
     import { push } from "svelte-spa-router";
 

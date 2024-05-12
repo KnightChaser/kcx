@@ -61,36 +61,35 @@
     }
 </script>
 
-<main>
-    <div class="container mt-5">
-        <h1>Login</h1>
-        <h5>Oh, who's there?</h5>
+<main class="min-h-screen flex items-center justify-center p-6" id="login_form">
+    <div class="w-full max-w-xs">
+        <h1 class="text-3xl font-bold mb-2">Login</h1>
+        <h5 class="text-xl mb-4">Oh, who's there?</h5>
         {#if errorMessage}
-            <div class="alert alert-danger" role="alert">
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
                 {errorMessage}
             </div>
         {/if}
         <form on:submit|preventDefault={login}>
-            <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input type="text" bind:value={username} class="form-control" id="username" required>
+            <div class="mb-4">
+                <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                <input type="text" bind:value={username} 
+                    class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-shadow"
+                    id="username" required>
             </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" bind:value={password} class="form-control" id="password" required>
+            <div class="mb-6">
+                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" bind:value={password} 
+                    class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-shadow"
+                    id="password" required>
             </div>
-            <button type="submit" class="btn btn-primary">Login</button>
+            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Login</button>
         </form>
     </div>
 </main>
 
 <style>
-    * {
-        font-family: 'SF Pro Display', sans-serif;
-    }
-    
-    main {
-        max-width: 320px;
-        margin: auto;
+    #login_form {
+        font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
     }
 </style>

@@ -1,4 +1,5 @@
 <!-- The common header bar that will be added to service-wide  -->
+
 <script>
     import { auth } from '../stores/auth.js';
     import { onMount, onDestroy } from 'svelte';
@@ -14,7 +15,6 @@
         auth.check();
     });
 
-    // Optionally, respond to storage events that might be triggered from other tabs
     function handleStorageEvent(event) {
         if (event.key === 'token') {
             auth.check();
@@ -28,45 +28,27 @@
     });
 </script>
 
-<nav class="navbar navbar-expand-lg bg-dark border-bottom border-body">
-    <div class="container-fluid">
-        <a class="navbar-brand"
-           href="#/"
-           on:click|preventDefault={() => moveToAnotherPage('/')}
-           tabindex="0">KCX</a>
+<nav class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-lg py-4" id="navbar">
+    <div class="container mx-auto px-4">
+        <div class="flex justify-between items-center">
+            <a class="text-white text-3xl font-semibold no-underline"
+               href="#/"
+               on:click|preventDefault={() => moveToAnotherPage('/')}
+               tabindex="0">KCX</a>
 
-        <!-- Right-aligned navigation links -->
-        <div class="d-flex justify-content-end" style="width: 100%;">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="/" on:click|preventDefault={() => moveToAnotherPage('/')}
-                       tabindex="0">Home</a>
-                </li>
-
+            <!-- Right-aligned navigation links -->
+            <div class="flex items-center space-x-4">
+                <a class="text-white hover:text-gray-200 no-underline" href="/" on:click|preventDefault={() => moveToAnotherPage('/')} tabindex="0">Home</a>
+                
                 {#if $auth}
-                    <li class="nav-item">
-                        <a class="nav-link" href="/logout" on:click|preventDefault={() => moveToAnotherPage('/logout')}
-                           tabindex="0">Logout</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/user/main" on:click|preventDefault={() => moveToAnotherPage('/user/main')}
-                           tabindex="0">My page</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/exchange/main" on:click|preventDefault={() => moveToAnotherPage('/exchange/main')}
-                           tabindex="0">Exchange</a>
-                    </li>
+                    <a class="text-white hover:text-gray-200 no-underline" href="/logout" on:click|preventDefault={() => moveToAnotherPage('/logout')} tabindex="0">Logout</a>
+                    <a class="text-white hover:text-gray-200 no-underline" href="/user/main" on:click|preventDefault={() => moveToAnotherPage('/user/main')} tabindex="0">My page</a>
+                    <a class="text-white hover:text-gray-200 no-underline" href="/exchange/main" on:click|preventDefault={() => moveToAnotherPage('/exchange/main')} tabindex="0">Exchange</a>
                 {:else}
-                    <li class="nav-item">
-                        <a class="nav-link" href="/login" on:click|preventDefault={() => moveToAnotherPage('/login')}
-                           tabindex="0">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/register" on:click|preventDefault={() => moveToAnotherPage('/register')}
-                           tabindex="0">Register</a>
-                    </li>
+                    <a class="text-white hover:text-gray-200 no-underline" href="/login" on:click|preventDefault={() => moveToAnotherPage('/login')} tabindex="0">Login</a>
+                    <a class="text-white hover:text-gray-200 no-underline" href="/register" on:click|preventDefault={() => moveToAnotherPage('/register')} tabindex="0">Register</a>
                 {/if}
-            </ul>
+            </div>
         </div>
     </div>
 </nav>
@@ -77,12 +59,12 @@
         src: url("../src/assets/SF-Pro-Display-Medium.otf") format("opentype");
     }
 
-    nav {
-        font-family: "SF Pro Display";
-        background-color: slateblue !important;
+    #navbar {
+        font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
     }
 
-    a {
-        color: white;
+    /* Remove underline from links and apply any additional link styling */
+    .no-underline {
+        text-decoration: none;
     }
 </style>

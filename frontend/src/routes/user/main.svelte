@@ -11,10 +11,10 @@
 
     // Store for user's asset information
     const balances = writable({
-        KRW: { amount: 0, estimatedValue: 0 },
-        BTC: { amount: 0, estimatedValue: 0 },
-        ETH: { amount: 0, estimatedValue: 0 },
-        XRP: { amount: 0, estimatedValue: 0 },
+        KRW: { amount: 0, estimatedValue: 0, fullname: "South Korean Won" },
+        BTC: { amount: 0, estimatedValue: 0, fullname: "Bitcoin" },
+        ETH: { amount: 0, estimatedValue: 0, fullname: "Ethereum" },
+        XRP: { amount: 0, estimatedValue: 0, fullname: "Ripple"},
     });
 
     // Store for total asset value in KRW
@@ -137,49 +137,78 @@
         setInterval(getBalance, 500);
         setInterval(calculateAssetValueInKRW, 500);
     });
+    
+    // Helper to format amounts with trailing zeros in gray
+    function formatAmount(currency, amount) {
+        let formatted = currency === 'KRW' ? amount.toLocaleString() : amount.toFixed(8).toLocaleString();
+        let [main, decimals] = formatted.split('.');
+        if (decimals) {
+            let significant = decimals.replace(/0+$/, '');
+            let zeros = decimals.slice(significant.length);
+            return `${main}.<span style="color: gray;">${significant}</span><span style="color: lightgray;">${zeros}</span> ${currency}`;
+        }
+        return formatted + ' ' + currency;
+    }
 </script>
 
 <style>
-    main {
-        font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+    @font-face {
+        font-family: "SF Mono";
+        src: url("../../assets/SFMono-Regular.otf");
+    }
+
+    h1 {
+        font-family: "SF Pro Display";
+    }
+
+    .asset-table {
+        font-family: "SF Mono";
     }
 </style>
 
 <main class="p-6">
-    <h1 class="text-2xl mb-6"><b>{username}</b>'s asset</h1>
+    <h1 class="text-2xl mb-6"><b>{username}</b>'s assets</h1>
 
     <!-- Total asset panel -->
-    <div class="flex flex-col justify-between pt-8 pb-2 px-4 mb-8 border rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+    <div class="flex flex-col justify-between pt-8 pb-2 px-4 mb-8 border rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 asset-table">
         <h2 class="text-2xl font-bold">Total Asset</h2>
         <div class="flex justify-between items-end">
-            <div class="flex-1"></div> <!-- This is to push the text to the right -->
+            <div class="flex-1"></div>
             <div class="text-right">
-                <!-- Total asset value in KRW -->
                 <p class="text-2xl mb-1"><b>{Math.round($totalKRW.KRW).toLocaleString()}</b> KRW</p> 
-                <!-- Total asset value in BTC -->
                 <p class="text-sm text-blue-500">≈ <b>{$totalKRW.BTC.toFixed(8).toLocaleString()}</b> BTC</p>
             </div>
         </div>
     </div>
 
-    <!-- Asset information per type -->
-    <div class="flex items-center py-8 px-4 border rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {#each Object.entries($balances) as [currency, {amount, estimatedValue}]}
-            <div class="flex flex-col p-3 border rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-                <!-- Image and title -->
-                <div class="flex items-center mb-4">
-                    <img src="/src/assets/currency_logo/{currency.toLowerCase()}_logo.png" alt="{currency} logo" class="h-8 w-8 mr-3">
-                    <h4 class="font-semibold">{currency}</h4>
-                </div>
-                <!-- Asset amount -->
-                <p class="text-lg mb-1 text-right">{currency === 'KRW' ? amount.toLocaleString() : amount.toFixed(8).toLocaleString()} {currency}</p>
-                <!-- Estimated value -->
-                {#if currency !== 'KRW'}
-                    <p class="text-sm text-blue-500 text-right">≈ <b>{Math.round(estimatedValue).toLocaleString()}</b> KRW</p>
-                {/if}
-            </div>
-            {/each}
-        </div>
+    <!-- Asset information per type as a wide table -->
+    <div class="overflow-x-auto asset-table">
+        <table class="min-w-full wide-table">
+            <thead>
+                <tr class="text-left">
+                    <th class="px-4 py-2">Assets</th>
+                    <th class="px-4 py-2 text-right">Amount</th>
+                    <th class="px-4 py-2 text-right">Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                {#each Object.entries($balances) as [currency, {amount, estimatedValue, fullname}]}
+                <tr class="border-t">
+                    <td class="px-4 py-2 flex items-center">
+                        <img src="/src/assets/currency_logo/{currency.toLowerCase()}_logo.png" alt="{currency} logo" class="h-8 w-8 mr-3">
+                        <span>{fullname}</span>
+                    </td>
+                    <td class="px-4 py-2 text-right">
+                        {@html formatAmount(currency, amount)}
+                    </td>
+                    <td class="px-4 py-2 text-right">
+                        {#if currency !== 'KRW'}
+                        <p class="text-sm text-blue-500">≈ <b>{Math.round(estimatedValue).toLocaleString()}</b> KRW</p>
+                        {/if}
+                    </td>
+                </tr>
+                {/each}
+            </tbody>
+        </table>
     </div>
 </main>

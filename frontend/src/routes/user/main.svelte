@@ -2,37 +2,20 @@
 
 <script>
     import { onMount, onDestroy } from 'svelte';
-    import Swal from 'sweetalert2';
-    import { push } from 'svelte-spa-router';
-    import { getBalance, calculateAssetValueInKRW } from '../../utils/userAssets.js';
+    import { fetchDataAndUpdate } from '../../utils/fetchAssetDataAndUpdate.js';
     import TotalAssetTable from '../../components/totalAssetTable.svelte';
     import AssetTable from '../../components/assetTable.svelte';
 
     const username = localStorage.getItem('username');
 
-    async function fetchDataAndUpdate() {
-        try {
-            await getBalance();                     // This will automatically update the balances store
-            await calculateAssetValueInKRW();       // This updates totalKRW and recalculates estimated values
-        } catch (error) {
-            Swal.fire({
-                title: 'Error',
-                text: error.message,
-                icon: 'error',
-                confirmButtonText: 'OK',
-            });
-            push('/login');                         // Redirect to login page
-        }
-    }
-
-    let fetchDataAndUpdateIntervalId;
+    let fetchAssetDataAndUpdateIntervalId;
     onMount(() => {
         fetchDataAndUpdate();
-        fetchDataAndUpdateIntervalId = setInterval(fetchDataAndUpdate, 1000);   // Fetch data every 1 second
+        fetchAssetDataAndUpdateIntervalId = setInterval(fetchDataAndUpdate, 1000);   // Fetch data every 1 second
     });
 
     onDestroy(() => {
-        clearInterval(fetchDataAndUpdateIntervalId);
+        clearInterval(fetchAssetDataAndUpdateIntervalId);
     });
 </script>
 

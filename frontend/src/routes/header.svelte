@@ -4,6 +4,7 @@
     import { auth } from '../stores/auth.js';
     import { onMount, onDestroy } from 'svelte';
     import { push } from "svelte-spa-router";
+    import NavbarTotalAssetTable from '../components/navbarTotalAssetTable.svelte';
 
     // Function to move to another page
     function moveToAnotherPage(path) {
@@ -44,6 +45,7 @@
                     <a class="text-white hover:text-gray-200 no-underline" href="/logout" on:click|preventDefault={() => moveToAnotherPage('/logout')} tabindex="0">Logout</a>
                     <a class="text-white hover:text-gray-200 no-underline" href="/user/main" on:click|preventDefault={() => moveToAnotherPage('/user/main')} tabindex="0">My page</a>
                     <a class="text-white hover:text-gray-200 no-underline" href="/exchange/main" on:click|preventDefault={() => moveToAnotherPage('/exchange/main')} tabindex="0">Exchange</a>
+                    <NavbarTotalAssetTable />
                 {:else}
                     <a class="text-white hover:text-gray-200 no-underline" href="/login" on:click|preventDefault={() => moveToAnotherPage('/login')} tabindex="0">Login</a>
                     <a class="text-white hover:text-gray-200 no-underline" href="/register" on:click|preventDefault={() => moveToAnotherPage('/register')} tabindex="0">Register</a>

@@ -1,11 +1,12 @@
 <!-- user/main.svelte -->
 
 <script>
-    import { onMount } from "svelte";
+    import { onMount, onDestroy } from "svelte";
     import { writable, get } from "svelte/store";
     import Swal from "sweetalert2";
     import { push } from "svelte-spa-router";
-    import { NumberFlip } from "number-flip";
+    import { CountUp } from "countup.js";
+    import { Odometer } from 'odometer_countup';
 
     const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL;
 
@@ -14,14 +15,14 @@
         KRW: { amount: 0, estimatedValue: 0, fullname: "South Korean Won" },
         BTC: { amount: 0, estimatedValue: 0, fullname: "Bitcoin" },
         ETH: { amount: 0, estimatedValue: 0, fullname: "Ethereum" },
-        XRP: { amount: 0, estimatedValue: 0, fullname: "Ripple"},
+        XRP: { amount: 0, estimatedValue: 0, fullname: "Ripple" },
     });
 
     // Store for total asset value in KRW
     const totalKRW = writable({
         KRW: 0,
-        BTC: 0,     // BTC equivalent of the total asset value in KRW
-    })
+        BTC: 0, // BTC equivalent of the total asset value in KRW
+    });
     const username = localStorage.getItem("username");
 
     // Fetch user's asset information from the backend
@@ -29,13 +30,15 @@
         try {
             const response = await fetch(`${BACKEND_API_URL}/account/balance`, {
                 method: "GET",
-                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
             });
             if (!response.ok) throw new Error("Failed to fetch balances");
 
             // Update the balances store with the fetched data
             const data = await response.json();
-            balances.update(b => {
+            balances.update((b) => {
                 // Update the balances store with the fetched data
                 for (const [currency, amount] of Object.entries(data)) {
                     if (b[currency]) {
@@ -59,7 +62,9 @@
 
     // Fetch ticker information from UpBit OpenAPI
     async function getTickerInformation(marketCodeListString) {
-        const response = await fetch(`https://api.upbit.com/v1/ticker?markets=${marketCodeListString}`);
+        const response = await fetch(
+            `https://api.upbit.com/v1/ticker?markets=${marketCodeListString}`
+        );
         if (!response.ok) {
             Swal.fire({
                 title: "Error",
@@ -74,7 +79,9 @@
 
     // Return the current Bitcoin price in KRW (Only returns the price)
     async function getBTCPriceInKRW() {
-        const response = await fetch("https://api.upbit.com/v1/ticker?markets=KRW-BTC");
+        const response = await fetch(
+            "https://api.upbit.com/v1/ticker?markets=KRW-BTC"
+        );
         if (!response.ok) {
             Swal.fire({
                 title: "Error",
@@ -93,27 +100,28 @@
     async function calculateAssetValueInKRW() {
         const localBalances = get(balances); // Get a snapshot of the current state
         const marketCodeList = Object.keys(localBalances)
-            .filter(currency => currency !== "KRW")
-            .map(currency => `KRW-${currency}`)
+            .filter((currency) => currency !== "KRW")
+            .map((currency) => `KRW-${currency}`)
             .join(",");
 
         const tickerInformation = await getTickerInformation(marketCodeList);
 
         // Total asset value in KRW; First, add the KRW balance
-        totalKRW.update(b => {
+        totalKRW.update((b) => {
             b.KRW = localBalances.KRW.amount;
             return b;
         });
 
         // Update the balances store with the estimated value
-        balances.update(b => {
-            tickerInformation.forEach(ticker => {
-                const currency = ticker.market.split("-")[1];   // "ETH-KRW" -> "ETH"
-                const estimatedValue = parseFloat(ticker.trade_price) * b[currency].amount;
+        balances.update((b) => {
+            tickerInformation.forEach((ticker) => {
+                const currency = ticker.market.split("-")[1]; // "ETH-KRW" -> "ETH"
+                const estimatedValue =
+                    parseFloat(ticker.trade_price) * b[currency].amount;
                 b[currency].estimatedValue = estimatedValue;
 
                 // Add the estimated value to the total asset value in KRW
-                totalKRW.update(b => {
+                totalKRW.update((b) => {
                     b.KRW += estimatedValue;
                     return b;
                 });
@@ -123,60 +131,120 @@
 
         // Calculate the BTC equivalent of the total asset value in KRW
         let btcPriceInKRW = await getBTCPriceInKRW();
-        totalKRW.update(b => {
+        totalKRW.update((b) => {
             b.BTC = b.KRW / btcPriceInKRW;
             return b;
         });
     }
 
+    let totalAssetKRWTargetElement;
+    let totalAssetKRWCountUp;
+    let totalAssetBTCTargetElement;
+    let totalAssetBTCCountUp;
+    let getBalanaceIntervalId;
+    let calculateAssetValueInKRWIntervalId;
+
     onMount(async () => {
         getBalance();
         calculateAssetValueInKRW();
 
+        // Initialize the CountUp instances for total asset value in KRW and BTC
+        totalAssetKRWCountUp = new CountUp(
+            totalAssetKRWTargetElement,
+            get(totalKRW).KRW,
+            {
+                duration: 1.5,
+                separator: ",",
+                decimal: ".",
+                startVal: get(totalKRW).KRW,
+                plugin: new Odometer({
+                    duration: 1.5,
+                    lastDigitDelay: 0
+                })
+            },
+        );
+
+        totalAssetBTCCountUp = new CountUp(
+            totalAssetBTCTargetElement,
+            get(totalKRW).BTC,
+            {
+                duration: 1.0,
+                separator: ",",
+                decimal: ".",
+                decimalPlaces: 8,
+                startVal: get(totalKRW).BTC,
+                plugin: new Odometer({
+                    duration: 1.0,
+                    lastDigitDelay: 0
+                })
+            },
+        );
+        
+        // Start the initial animation
+        totalAssetKRWCountUp.start();
+        
+        // Subscribe to totalKRW changes
+        totalKRW.subscribe(($totalKRW) => {
+            if (
+                totalAssetKRWCountUp &&
+                $totalKRW.KRW !== totalAssetKRWCountUp.endVal
+            ) {
+                totalAssetKRWCountUp.update($totalKRW.KRW);
+            }
+
+            if (
+                totalAssetBTCCountUp &&
+                $totalKRW.BTC !== totalAssetBTCCountUp.endVal
+            ) {
+                totalAssetBTCCountUp.update($totalKRW.BTC);
+            }
+        });
+
         // Update the balances store with the fetched data every second
-        setInterval(getBalance, 500);
-        setInterval(calculateAssetValueInKRW, 500);
+        getBalanaceIntervalId = setInterval(getBalance, 500);
+        calculateAssetValueInKRWIntervalId = setInterval(calculateAssetValueInKRW, 500);
     });
-    
+
+    // If the user moves another page, clear the interval
+    // So that the interval does not continue to run in the background, even though the user logs out
+    onDestroy(() => {
+        clearInterval(getBalanaceIntervalId);
+        clearInterval(calculateAssetValueInKRWIntervalId);
+    });
+
     // Helper to format amounts with trailing zeros in gray
     function formatAmount(currency, amount) {
-        let formatted = currency === 'KRW' ? amount.toLocaleString() : amount.toFixed(8).toLocaleString();
-        let [main, decimals] = formatted.split('.');
+        let formatted =
+            currency === "KRW"
+                ? amount.toLocaleString()
+                : amount.toFixed(8).toLocaleString();
+        let [main, decimals] = formatted.split(".");
         if (decimals) {
-            let significant = decimals.replace(/0+$/, '');
+            let significant = decimals.replace(/0+$/, "");
             let zeros = decimals.slice(significant.length);
             return `${main}.<span style="color: gray;">${significant}</span><span style="color: lightgray;">${zeros}</span> ${currency}`;
         }
-        return formatted + ' ' + currency;
+        return formatted + " " + currency;
     }
 </script>
-
-<style>
-    @font-face {
-        font-family: "SF Mono";
-        src: url("../../assets/SFMono-Regular.otf");
-    }
-
-    h1 {
-        font-family: "SF Pro Display";
-    }
-
-    .asset-table {
-        font-family: "SF Mono";
-    }
-</style>
 
 <main class="p-6">
     <h1 class="text-2xl mb-6"><b>{username}</b>'s assets</h1>
 
     <!-- Total asset panel -->
-    <div class="flex flex-col justify-between pt-8 pb-2 px-4 mb-8 border rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 asset-table">
+    <div
+        class="flex flex-col justify-between pt-8 pb-2 px-4 mb-8 border rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 asset-table"
+    >
         <h2 class="text-2xl font-bold">Total Asset</h2>
         <div class="flex justify-between items-end">
             <div class="flex-1"></div>
             <div class="text-right">
-                <p class="text-2xl mb-1"><b>{Math.round($totalKRW.KRW).toLocaleString()}</b> KRW</p> 
-                <p class="text-sm text-blue-500">≈ <b>{$totalKRW.BTC.toFixed(8).toLocaleString()}</b> BTC</p>
+                <p class="text-2xl mb-1">
+                    <b bind:this={totalAssetKRWTargetElement}>{$totalKRW.KRW}</b> KRW
+                </p>
+                <p class="text-sm text-blue-500">
+                    ≈ <b bind:this={totalAssetBTCTargetElement}>{$totalKRW.BTC}</b> BTC
+                </p>
             </div>
         </div>
     </div>
@@ -192,23 +260,48 @@
                 </tr>
             </thead>
             <tbody>
-                {#each Object.entries($balances) as [currency, {amount, estimatedValue, fullname}]}
-                <tr class="border-t">
-                    <td class="px-4 py-2 flex items-center">
-                        <img src="/src/assets/currency_logo/{currency.toLowerCase()}_logo.png" alt="{currency} logo" class="h-8 w-8 mr-3">
-                        <span>{fullname}</span>
-                    </td>
-                    <td class="px-4 py-2 text-right">
-                        {@html formatAmount(currency, amount)}
-                    </td>
-                    <td class="px-4 py-2 text-right">
-                        {#if currency !== 'KRW'}
-                        <p class="text-sm text-blue-500">≈ <b>{Math.round(estimatedValue).toLocaleString()}</b> KRW</p>
-                        {/if}
-                    </td>
-                </tr>
+                {#each Object.entries($balances) as [currency, { amount, estimatedValue, fullname }]}
+                    <tr class="border-t">
+                        <td class="px-4 py-2 flex items-center">
+                            <img
+                                src="/src/assets/currency_logo/{currency.toLowerCase()}_logo.png"
+                                alt="{currency} logo"
+                                class="h-8 w-8 mr-3"
+                            />
+                            <span>{fullname}</span>
+                        </td>
+                        <td class="px-4 py-2 text-right">
+                            {@html formatAmount(currency, amount)}
+                        </td>
+                        <td class="px-4 py-2 text-right">
+                            {#if currency !== "KRW"}
+                                <p class="text-sm text-blue-500">
+                                    ≈ <b
+                                        >{Math.round(
+                                            estimatedValue
+                                        ).toLocaleString()}</b
+                                    > KRW
+                                </p>
+                            {/if}
+                        </td>
+                    </tr>
                 {/each}
             </tbody>
         </table>
     </div>
 </main>
+
+<style>
+    @font-face {
+        font-family: "SF Mono";
+        src: url("../../assets/SFMono-Regular.otf");
+    }
+
+    h1 {
+        font-family: "SF Pro Display";
+    }
+
+    .asset-table {
+        font-family: "SF Mono";
+    }
+</style>

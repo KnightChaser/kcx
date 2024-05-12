@@ -16,6 +16,11 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 auth.logout();
+
+                // Remove the username and email from the local storage
+                localStorage.removeItem('username');
+                localStorage.removeItem('email');
+
                 push('/');
             } else {
                 push('/'); 

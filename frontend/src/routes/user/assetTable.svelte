@@ -1,8 +1,8 @@
 <!-- components/assetTable.js  -->
 <!-- Getting the asset table per asset -->
 <script>
-    import { balances } from "../stores/usesrAssets"; 
-    import { formatAmount } from "../utils/formatAmount.js";
+    import { balances } from "../../stores/usesrAssets"; 
+    import { formatAmount } from "../../utils/formatAmount.js";
 </script>
 
 <div class="overflow-x-auto w-full">

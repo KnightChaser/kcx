@@ -2,7 +2,7 @@
 <!-- Show the entire asset estimation in KRW and BTC -->
 <script>
     import { onDestroy, onMount } from 'svelte';
-    import { totalKRW } from '../stores/usesrAssets';
+    import { totalKRW } from '../../stores/usesrAssets';
     import { CountUp } from "countup.js";
     import { Odometer } from 'odometer_countup';
 

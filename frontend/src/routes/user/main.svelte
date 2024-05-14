@@ -3,8 +3,8 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
     import { fetchDataAndUpdate } from '../../utils/fetchAssetDataAndUpdate.js';
-    import TotalAssetTable from '../../components/totalAssetTable.svelte';
-    import AssetTable from '../../components/assetTable.svelte';
+    import TotalAssetTable from './totalAssetTable.svelte';
+    import AssetTable from './assetTable.svelte';
 
     const username = localStorage.getItem('username');
 

@@ -1,4 +1,4 @@
-<!-- components/totalAssetTable.svelte -->
+<!-- routes/components/totalAssetTable.svelte -->
 <!-- Show the entire asset estimation in KRW and BTC -->
 <script>
     import { onDestroy, onMount } from 'svelte';

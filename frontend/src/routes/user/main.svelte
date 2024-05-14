@@ -1,4 +1,4 @@
-<!-- user/main.svelte -->
+<!-- routes/user/main.svelte -->
 
 <script>
     import { onMount, onDestroy } from 'svelte';
@@ -37,7 +37,7 @@
 
     @font-face {
         font-family: "SF Pro Display";
-        src: url("../../assets/SFProDisplay-Regular.otf");
+        src: url("../../assets/SF-Pro-Display-Medium.otf");
     }
 
 

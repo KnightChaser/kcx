@@ -1,7 +1,7 @@
 # schemas.py
 # database schema classes for FastAPI
 
-from pydantic import BaseModel, EmailStr, FiniteFloat
+from pydantic import BaseModel, EmailStr, FiniteFloat, Field
 
 # User registration schema
 class UserRegistrationSchema(BaseModel):
@@ -20,3 +20,7 @@ class BalanceSchema(BaseModel):
     BTC: FiniteFloat
     ETH: FiniteFloat
     XRP: FiniteFloat
+
+# User balance schema for deposit and withdraw
+class BalanceDepositWithdrawSchema(BaseModel):
+    KRW: FiniteFloat = Field(..., gt=0, description="Amount of KRW to deposit or withdraw, must be greater than zero")

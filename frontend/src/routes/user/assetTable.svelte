@@ -1,4 +1,4 @@
-<!-- components/assetTable.js  -->
+<!-- routes/user/assetTable.js  -->
 <!-- Getting the asset table per asset -->
 <script>
     import { balances } from "../../stores/usesrAssets"; 

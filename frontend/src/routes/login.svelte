@@ -47,6 +47,7 @@
                     auth.login(user.access_token);
                     localStorage.setItem('username', username);
                     localStorage.setItem('email', user.email);
+                    localStorage.setItem('uuid', user.uuid);
                     
                     // redirect to the home page
                     if (result.isConfirmed) {

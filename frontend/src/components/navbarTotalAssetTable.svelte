@@ -1,6 +1,7 @@
 <!-- components/navbarTotalAssetTable -->
 <script>
     import { onMount, onDestroy } from "svelte";
+    import { sessionValidityCheck } from "../utils/sessionValidityCheck";
     import { totalKRW } from "../stores/usesrAssets";
     import { CountUp } from "countup.js";
     import { Odometer } from "odometer_countup";
@@ -35,6 +36,7 @@
         });
 
         fetchAssetDataAndUpdateIntervalId = setInterval(() => {
+            sessionValidityCheck();
             fetchDataAndUpdate();
         }, 1000);
 

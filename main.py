@@ -11,6 +11,7 @@ from contextlib import asynccontextmanager
 from rich.console import Console
 from dotenv import load_dotenv
 import os
+import uuid
 
 # Start this application when the server starts
 @asynccontextmanager
@@ -40,14 +41,16 @@ async def lifespan(app: FastAPI):
         from database import SessionLocal
 
         db = SessionLocal()
+        user_uuid:str = str(uuid.uuid4())
         new_user = User(username = test_account_id,
                         email = test_account_email,
-                        password = test_account_pw)
+                        password = test_account_pw,
+                        uuid=user_uuid)
         db.add(new_user)
         db.commit()
         db.refresh(new_user)
         db.close()
-        console.log(f"Test account created because it didn't exist")
+        console.log(f"Test account created because it didn't exist [bold](UUID: {user_uuid})[/bold]")
 
         # Manully insert the balance for the test account
         from models import Balance

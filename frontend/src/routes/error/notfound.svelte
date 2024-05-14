@@ -1,8 +1,6 @@
 <!-- error/notfound.svelte -->
 
 <script>
-    import { Button } from "bootstrap";
-
     // If the user click error link, move to the previous page where the error occurred
     function moveToPreviousPage() {
         window.history.back();

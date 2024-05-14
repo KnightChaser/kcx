@@ -8,6 +8,7 @@ from typing import Dict, Union
 import datetime
 import jwt
 import os
+import uuid
 
 # Note that those packages are located in the parent directory
 import sys
@@ -68,7 +69,8 @@ def login(login: LoginSchema, db: Session = Depends(get_db)) -> Dict:
     return {"access_token": access_token, 
             "token_type": "bearer",
             "username": user.username,
-            "email": user.email}
+            "email": user.email,
+            "uuid": user.uuid}
 
 # Register router
 @router.post("/account/register/")
@@ -88,9 +90,10 @@ def register(user: UserRegistrationSchema, db: Session = Depends(get_db)) -> Dic
 
     # Create a new user instance
     new_user = User(
+        uuid=str(uuid.uuid4()),       # UUID4 is used for the user ID(identifier)
         username=user.username,
         email=user.email,
-        password=user.password
+        password=user.password,
     )
     db.add(new_user)
     db.commit()

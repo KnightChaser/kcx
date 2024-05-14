@@ -16,24 +16,24 @@
     // Every 500ms, update the total asset value
     onMount(() => {
         totalAssetKRWCountUp = new CountUp(totalAssetKRWTargetElement, $totalKRW.KRW, {
-            duration: 1.5,
+            duration: 0.5,
             separator: ",",
             decimal: ".",
             startVal: $totalKRW.KRW,
             plugin: new Odometer({
-                duration: 1.5,
+                duration: 0.5,
                 lastDigitDelay: 0
             })
         });
 
         totalAssetBTCCountUp = new CountUp(totalAssetBTCTargetElement, $totalKRW.BTC, {
-            duration: 1.0,
+            duration: 0.15,
             separator: ",",
             decimal: ".",
             decimalPlaces: 8,
             startVal: $totalKRW.BTC,
             plugin: new Odometer({
-                duration: 1.0,
+                duration: 0.15,
                 lastDigitDelay: 0
             })
         });

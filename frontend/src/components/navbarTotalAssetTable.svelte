@@ -17,13 +17,13 @@
             totalAssetValueElement,
             $totalKRW.KRW,
             {
-                duration: 1.5,
+                duration: 0.5,
                 separator: ",",
                 decimal: ".",
                 prefix: "₩",
                 startVal: $totalKRW.KRW,
                 plugin: new Odometer({
-                    duration: 1.5,
+                    duration: 0.5,
                     lastDigitDelay: 0,
                 }),
             }

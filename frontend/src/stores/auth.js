@@ -9,14 +9,17 @@ function createAuthStore() {
     return {
         subscribe,
         login: (token) => {
+            // Save the token in the local storage after logging in
             localStorage.setItem('token', token);
             set(true);
         },
         logout: () => {
+            // Remove the token from the local storage after logging out
             localStorage.removeItem('token');
             set(false);
         },
         check: () => {
+            // Check if the user is authenticated by checking the token in the local storage
             const token = localStorage.getItem('token');
             set(!!token);
         }

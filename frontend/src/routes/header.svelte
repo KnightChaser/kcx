@@ -2,6 +2,7 @@
 
 <script>
     import { auth } from '../stores/auth.js';
+    import { sessionValidityCheck } from '../utils/sessionValidityCheck';
     import { onMount, onDestroy } from 'svelte';
     import { push } from "svelte-spa-router";
     import NavbarTotalAssetTable from '../components/navbarTotalAssetTable.svelte';
@@ -14,8 +15,10 @@
     onMount(() => {
         // Check authentication status when the component mounts
         auth.check();
+        sessionValidityCheck();
     });
 
+    // Handle the storage event
     function handleStorageEvent(event) {
         if (event.key === 'token') {
             auth.check();

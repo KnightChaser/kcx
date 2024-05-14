@@ -27,8 +27,8 @@ def create_access_token(data: Dict, secret_key:str = None, expires_delta: dateti
     if expires_delta:
         expire = datetime.datetime.now(datetime.UTC) + expires_delta
     else:
-        expire = datetime.datetime.now(datetime.UTC) + datetime.timedelta(minutes = 30)
-    to_encode.update({"exp": expire})
+        expire = datetime.datetime.now(datetime.UTC) + datetime.timedelta(minutes = expires_delta)
+    to_encode.update({"exp": expire})       # Add the expiration time to the token
     encoded_jwt: str = jwt.encode(to_encode, secret_key, algorithm="HS256")
     return encoded_jwt
 
@@ -57,14 +57,14 @@ def login(login: LoginSchema, db: Session = Depends(get_db)) -> Dict:
     
     # Login successful, send the user information
     secret_key:str = os.getenv("JWT_SECRET_KEY")
-    access_token_expires_in:int = int(os.getenv("JWT_TOKEN_EXPIRES_MINUTES"))
+    access_token_expires_in_minutes:int = int(os.getenv("JWT_TOKEN_EXPIRES_MINUTES"))
     access_token = create_access_token(data={"sub": {
                                                 "id": user.id, 
                                                 "username": user.username, 
                                                 "email": user.email
                                             }}, 
                                        secret_key=secret_key, 
-                                       expires_delta=datetime.timedelta(minutes=access_token_expires_in))
+                                       expires_delta=datetime.timedelta(minutes=access_token_expires_in_minutes))
     return {"access_token": access_token, 
             "token_type": "bearer",
             "username": user.username,

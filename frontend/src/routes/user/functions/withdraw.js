@@ -2,6 +2,8 @@
 // Withdraw money(KRW; fiat currency) from user's account as the given amount
 
 import Swal from "sweetalert2";
+import axios from "axios";
+
 const token = localStorage.getItem("token");
 const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL;
 
@@ -24,24 +26,25 @@ export async function withdrawKRW() {
                 return;
             }
 
-            const response = await fetch(
-                `${BACKEND_API_URL}/account/withdraw/KRW`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                    body: JSON.stringify({ KRW }),
-                }
-            );
+            try {
+                const response = await axios.post(
+                    `${BACKEND_API_URL}/account/withdraw/KRW`,
+                    { KRW },
+                    {
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
 
-            if (!response.ok) {
+                return response.data;
+            } catch (error) {
                 // Throw an error if the response is not OK
-                throw new Error(await response.text());
+                Swal.showValidationMessage(
+                    `Request failed: ${error.response ? error.response.data : error.message}`
+                );
             }
-
-            return response.json();
         },
         allowOutsideClick: () => !Swal.isLoading(),
     }).then((result) => {

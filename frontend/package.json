@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@layflags/rolling-number": "^1.0.0",
+    "axios": "^1.6.8",
     "bootstrap": "^5.3.3",
     "countup.js": "^2.8.0",
     "odometer_countup": "^1.0.4",

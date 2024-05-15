@@ -3,6 +3,7 @@
     import { onMount } from "svelte";
     import { auth } from "../stores/auth.js";
     import Swal from "sweetalert2";
+    import axios from "axios";
     
     let username = "";
     let password = "";
@@ -11,30 +12,26 @@
 
     async function login() {
         try {
-            const response = await fetch(`${BACKEND_API_URL}/account/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, password })
+            // Call the backend API to login the user
+            const response = await axios.post(`${BACKEND_API_URL}/account/login`, {
+                username,
+                password
             });
 
-            if (!response.ok) {
-                if (response.status === 401 || response.status === 404) {
-                    Swal.fire({
-                        title: 'Who are you?',
-                        text: 'Invalid username or password',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                    return;
-                } 
-
-                // if the error is not 401 or 404, throw an error
-                throw new Error(await response.text());
+            if (response.status === 401 || response.status === 404) {
+                Swal.fire({
+                    title: 'Who are you?',
+                    text: 'Invalid username or password',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            } else if (response.status !== 200) {
+                // Untriggered error
+                errorMessage = 'An error occurred while logging in.';
             }
-
-            const user = await response.json();
+            
+            const user = response.data;
             if (response.status === 200) {
                 Swal.fire({
                     title: 'Success',

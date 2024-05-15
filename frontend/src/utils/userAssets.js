@@ -6,22 +6,25 @@ import { totalKRW } from "../stores/usesrAssets";
 import { push } from "svelte-spa-router";
 import { balances } from "../stores/usesrAssets";
 import Swal from "sweetalert2";
+import axios from "axios";
 
 const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL;
 
 // Fetch user's asset information from the backend
 export async function getBalance() {
     try {
-        const response = await fetch(`${BACKEND_API_URL}/account/balance`, {
+        const response = await axios(`${BACKEND_API_URL}/account/balance`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
         });
-        if (!response.ok) throw new Error("Failed to fetch balances");
+
+        if (response.status !== 200) 
+            throw new Error("Failed to fetch balances");
 
         // Update the balances store with the fetched data
-        const data = await response.json();
+        const data = response.data;
         balances.update((b) => {
             // Update the balances store with the fetched data
             for (const [currency, amount] of Object.entries(data)) {
@@ -46,10 +49,10 @@ export async function getBalance() {
 
 // Fetch ticker information from UpBit OpenAPI
 async function getTickerInformation(marketCodeListString) {
-    const response = await fetch(
+    const response = await axios(
         `https://api.upbit.com/v1/ticker?markets=${marketCodeListString}`
-    );
-    if (!response.ok) {
+    )
+    if (response.status !== 200) {
         Swal.fire({
             title: "Error",
             text: "Failed to get ticker information from UpBit OpenAPI",
@@ -58,7 +61,8 @@ async function getTickerInformation(marketCodeListString) {
         });
         return [];
     }
-    return response.json();
+
+    return response.data;
 }
 
 // Calculate the estimated asset value in KRW
@@ -105,10 +109,11 @@ export async function calculateAssetValueInKRW() {
 
 // Return the current Bitcoin price in KRW (Only returns the price)
 async function getBTCPriceInKRW() {
-    const response = await fetch(
+    const response = await axios(
         "https://api.upbit.com/v1/ticker?markets=KRW-BTC"
     );
-    if (!response.ok) {
+    
+    if (response.status !== 200) {
         Swal.fire({
             title: "Error",
             text: "Failed to get BTC price from UpBit OpenAPI",
@@ -117,6 +122,6 @@ async function getBTCPriceInKRW() {
         });
         return 0;
     }
-    const data = await response.json();
-    return data[0].trade_price;
+
+    return response.data[0].trade_price;
 }

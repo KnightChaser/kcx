@@ -1,9 +1,9 @@
 <!-- register.svelte (Applying user registration) -->
 
 <script>
-    import { onMount } from "svelte";
     import { push } from "svelte-spa-router";
     import Swal from "sweetalert2";
+    import axios from "axios";
 
     let username = "";
     let email = "";
@@ -22,36 +22,30 @@
             return;
         }
 
-        const response = await fetch(`${BACKEND_API_URL}/account/register`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ username, email, password }),
+        // Call the backend API to register the user
+        const response = await axios.post(`${BACKEND_API_URL}/account/register`, {
+            username,
+            email,
+            password,
         });
-
-        if (!response.ok) {
-            const data = await response.json();
+        
+        // If not successful, show an error message
+        if (response.status !== 200) {
             Swal.fire({
                 title: "Error",
-                text: data.detail,
+                text: "An error occurred while creating the account.",
                 icon: "error",
             });
             return;
         }
 
-        // Account created successfully
-        const data = await response.json();
+        // Account created successfully, send the user to the login page
         Swal.fire({
             title: "Success",
             text: "Account created successfully.",
             icon: "success",
-            confirmButtonText: "Go to login",
-            allowOutsideClick: false,
-        }).then((result) => {
-            if (result.isConfirmed) {
-                push("/login");
-            }
+        }).then(() => {
+            push("/login");
         });
     };
 

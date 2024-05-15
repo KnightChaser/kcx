@@ -3,6 +3,7 @@
     import { onMount } from 'svelte';
     import { push } from "svelte-spa-router";
     import Swal from 'sweetalert2';
+    import axios from 'axios';
     
     const username = localStorage.getItem('username');
     const token = localStorage.getItem('token');
@@ -13,13 +14,13 @@
 
     onMount(async () => {
         try {
-            const response = await fetch(`${BACKEND_API_URL}/account/deposit_withdraw/history/`, {
-                method: 'GET',
+            const response = await axios.get(`${BACKEND_API_URL}/account/deposit_withdraw/history/`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            if (!response.ok) {
+
+            if (response.status !== 200) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Failed to fetch history',
@@ -27,7 +28,8 @@
                 });
                 throw new Error('Failed to fetch history');
             }
-            history = await response.json();
+
+            history = response.data;
         } catch (err) {
             // Show error message
             error = err.message;

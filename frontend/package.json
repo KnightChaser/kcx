@@ -23,6 +23,7 @@
     "bootstrap": "^5.3.3",
     "countup.js": "^2.8.0",
     "odometer_countup": "^1.0.4",
+    "query-string": "^9.0.0",
     "svelte-spa-router": "^4.0.1",
     "sweetalert2": "^11.10.8"
   }

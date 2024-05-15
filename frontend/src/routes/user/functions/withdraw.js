@@ -1,4 +1,4 @@
-// routes/user/functions/withdrawl.js
+// routes/user/functions/withdraw.js
 // Withdraw money(KRW; fiat currency) from user's account as the given amount
 
 import Swal from "sweetalert2";
@@ -6,7 +6,7 @@ const token = localStorage.getItem("token");
 const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL;
 
 // Withdraw money (KRW; fiat currency)
-export async function widthdrawKRW() {
+export async function withdrawKRW() {
     Swal.fire({
         title: "Withdraw Money",
         text: "How much money do you want to withdraw? (KRW)",

@@ -38,6 +38,10 @@
             asyncComponent: () => import('./routes/user/main.svelte'),
             conditions: [() => $auth]  // Ensure authenticated
         }),
+        '/user/depositWithdrawHistory': wrap({
+            asyncComponent: () => import('./routes/user/depositeWithdrawlHistory.svelte'),
+            conditions: [() => $auth]  // Ensure authenticated
+        }),
         '*': NotFound  // Load immediately
     };
 </script>

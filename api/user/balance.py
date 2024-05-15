@@ -4,6 +4,7 @@
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from models import DepositWithdrawHistory
 from schemas import BalanceSchema, BalanceDepositWithdrawSchema
 from .authentication import get_current_user
 from .credentials import get_user_id_by_username
@@ -50,7 +51,14 @@ def deposit_KRW(deposit_balance: BalanceDepositWithdrawSchema, db: Session = Dep
     account_balance.KRW += deposit_balance.KRW
     db.commit()
     db.refresh(account_balance)  # Refresh the ORM model instance
-    
+
+    # Create a new deposit history
+    deposit_history = DepositWithdrawHistory(user_id=user_id, 
+                                             currency="KRW", 
+                                             amount=deposit_balance.KRW, 
+                                             transaction_type="deposit")
+    create_deposit_withdraw_history(deposit_history, db)
+
     return BalanceDepositWithdrawSchema(KRW=account_balance.KRW)
 
 # Withdraw money(KRW; fiat currency) from the user's account
@@ -76,4 +84,29 @@ def withdraw_KRW(withdraw_balance: BalanceDepositWithdrawSchema, db: Session = D
     db.commit()
     db.refresh(account_balance)
 
+    # Create a new withdraw history
+    withdraw_history = DepositWithdrawHistory(user_id=user_id, 
+                                              currency="KRW", 
+                                              amount=withdraw_balance.KRW, 
+                                              transaction_type="withdraw")
+    create_deposit_withdraw_history(withdraw_history, db)
+
     return BalanceDepositWithdrawSchema(KRW=account_balance.KRW)
+
+# Create a new balance deposit and withdraw history
+def create_deposit_withdraw_history(DepositWithdrawHistory: DepositWithdrawHistory, db: Session):
+    db.add(DepositWithdrawHistory)
+    db.commit()
+    db.refresh(DepositWithdrawHistory)
+
+# Get the user's balance deposit and withdraw history
+@router.get("/account/deposit_withdraw/history/")
+def get_deposit_withdraw_history(db: Session = Depends(get_db), current_user: User = Depends(get_current_user), length:int = 20):
+    username: str = current_user["username"]
+    user_id: int = get_user_id_by_username(username, db)
+    if not user_id:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    
+    # Get the user's deposit and withdraw history with the specified length, in descending order in terms of the creation time
+    history = db.query(DepositWithdrawHistory).filter(DepositWithdrawHistory.user_id == user_id).order_by(DepositWithdrawHistory.created_at.desc()).limit(length).all()
+    return history

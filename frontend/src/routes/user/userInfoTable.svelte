@@ -1,14 +1,17 @@
 <!-- routes/user/userInfoTable.svelte -->
-
 <script>
     import Swal from "sweetalert2";
+    import { push } from "svelte-spa-router";
     const username = localStorage.getItem('username');
     const token = localStorage.getItem('token');
     const uuid = localStorage.getItem('uuid');
     const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL;
     import { depositKRW } from "./functions/deposit";
-    import { widthdrawKRW } from "./functions/withdrawl";
+    import { withdrawKRW } from "./functions/withdraw";
 
+    function moveToAnotherPage(path) {
+        push(path);
+    }
 </script>
 
 <div class="w-full max-w-2xl mb-6">
@@ -21,15 +24,21 @@
         <div class="flex space-x-4">
             <!-- Deposit -->
             <button
-                class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg -md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
+                class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
                 on:click={depositKRW}>
                 Deposit
             </button>
-            <!-- Withdrawl -->
+            <!-- Withdraw -->
             <button
                 class="px-4 py-2 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75"
-                on:click={widthdrawKRW}>
+                on:click={withdrawKRW}>
                 Withdraw
+            </button>
+            <!-- Deposit/Withdraw History -->
+            <button
+                class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75"
+                on:click|preventDefault={() => moveToAnotherPage("/user/depositWithdrawHistory")}>
+                Wallet history
             </button>
         </div>
     </div>

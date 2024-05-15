@@ -18,19 +18,6 @@
                 password
             });
 
-            if (response.status === 401 || response.status === 404) {
-                Swal.fire({
-                    title: 'Who are you?',
-                    text: 'Invalid username or password',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-                return;
-            } else if (response.status !== 200) {
-                // Untriggered error
-                errorMessage = 'An error occurred while logging in.';
-            }
-            
             const user = response.data;
             if (response.status === 200) {
                 Swal.fire({
@@ -54,7 +41,11 @@
                 });
             }
         } catch (error) {
-            errorMessage = error.message;
+            if (error.response && error.response.status === 401) {
+                errorMessage = "Invalid username or password";
+            } else {
+                errorMessage = "Failed to login";
+            }
         }
     }
 </script>

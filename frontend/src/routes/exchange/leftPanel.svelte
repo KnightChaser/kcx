@@ -58,10 +58,6 @@
         background-color: #f7fafc;
     }
 
-    .hover\\:bg-gray-100:hover {
-        background-color: #f7fafc;
-    }
-
     ::-webkit-scrollbar {
         width: 8px;
     }

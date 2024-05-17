@@ -38,6 +38,12 @@
     $: selectedMarketCodeUnit = selectedMarket?.market.split('-')[1].toUpperCase();
     $: availableBalance = $balances[selectedMarketCodeUnit]?.amount ?? 0;
 
+    // Automatically gathers market information and refresh selectedaMarket for simultaneous updates, every 2 seconds
+    setInterval(async () => {
+        marketData = await getAllAvailableMarketsInfo();
+        selectedMarket = marketData.find(market => market.market === selectedMarket.market) || marketData[0];
+    }, 2000);
+
     // Automatically update the available balance when the user's assets change
     // Automatically update the market data when the user's assets change
     $: balances.subscribe(value => {

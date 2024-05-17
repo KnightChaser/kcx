@@ -14,58 +14,64 @@
 <div class="bg-white p-4 rounded-lg shadow-md border border-gray-500 h-full w-full">
     <h2 class="text-xl font-semibold mb-4 text-gray-800">Markets</h2>
     <div class="overflow-y-auto max-h-full">
-        <ul class="space-y-2">
-            {#each marketData as market}
-                <li>
-                    <button
-                        type="button"
-                        class="flex items-center justify-between w-full p-3 bg-white rounded-md shadow-sm cursor-pointer hover:bg-gray-300"
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Market
+                    </th>
+                    <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Change
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {#each marketData as market}
+                    <tr 
+                        class="cursor-pointer hover:bg-gray-100" 
                         on:click={() => handleClick(market)}
                     >
-                        <div class="flex items-center space-x-2">
+                        <td class="px-4 py-2 whitespace-nowrap flex items-center space-x-2">
                             <img src={`/src/assets/currency_logo/${market.market.replace('KRW-', '').toLowerCase()}_logo.png`} alt="Market Icon" class="h-6 w-6 rounded-full">
                             <span class="text-gray-900 font-medium">{market.market.replace('KRW-', '')}</span>
-                        </div>
-                        <span class={`font-semibold ${market.change_rate > 0 ? 'text-green-500' : 'text-red-500'}`}>
+                        </td>
+                        <td class="px-4 py-2 whitespace-nowrap font-semibold {market.change_rate > 0 ? 'text-green-500' : 'text-red-500'}">
                             {market.change_rate > 0 ? '+' : ''}{formatChangeRate(market.change_rate)}%
-                        </span>
-                    </button>
-                </li>
-            {/each}
-        </ul>
+                        </td>
+                    </tr>
+                {/each}
+            </tbody>
+        </table>
     </div>
 </div>
 
 <style>
-    ul::-webkit-scrollbar {
-        width: 8px;
+    table {
+        width: 100%;
     }
 
-    ul::-webkit-scrollbar-thumb {
-        background-color: #a0aec0;
-        border-radius: 4px;
+    thead {
+        background-color: #f9fafb;
     }
 
-    ul::-webkit-scrollbar-track {
-        background-color: #edf2f7;
+    tr:hover {
+        background-color: #f7fafc;
     }
 
     .hover\\:bg-gray-100:hover {
         background-color: #f7fafc;
     }
 
-    ul {
-        display: flex;
-        flex-direction: column;
-        margin: 0;
-        padding: 0;
+    ::-webkit-scrollbar {
+        width: 8px;
     }
 
-    li {
-        list-style-type: none;
+    ::-webkit-scrollbar-thumb {
+        background-color: #a0aec0;
+        border-radius: 4px;
     }
 
-    button:hover {
-        background-color: #f7fafc;
+    ::-webkit-scrollbar-track {
+        background-color: #edf2f7;
     }
 </style>

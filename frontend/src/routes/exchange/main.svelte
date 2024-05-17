@@ -37,13 +37,26 @@
     // Update the available balance whenever the selected market changes
     $: selectedMarketCodeUnit = selectedMarket?.market.split('-')[1].toUpperCase();
     $: availableBalance = $balances[selectedMarketCodeUnit]?.amount ?? 0;
+
+    // Automatically update the available balance when the user's assets change
+    // Automatically update the market data when the user's assets change
+    $: balances.subscribe(value => {
+        availableBalance = value[selectedMarketCodeUnit]?.amount ?? 0;
+    });
+
 </script>
 
 <main class="h-screen bg-gray-100 font-sans">
-    <div class="grid grid-cols-12 gap-4 p-4">
-        <LeftPanel {marketData} {selectedMarket} {setSelectedMarket} />
-        <CenterPanel {selectedMarket} />
-        <RightPanel {selectedMarketCodeUnit} {availableBalance} />
+    <div class="grid grid-cols-12 gap-4 p-4 h-full">
+        <div class="col-span-2 h-full">
+            <LeftPanel {marketData} {setSelectedMarket} />
+        </div>
+        <div class="col-span-7 h-full">
+            <CenterPanel {selectedMarket} />
+        </div>
+        <div class="col-span-3 h-full">
+            <RightPanel {selectedMarketCodeUnit} {availableBalance} />
+        </div>
     </div>
 </main>
 

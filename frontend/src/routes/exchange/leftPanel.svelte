@@ -35,8 +35,8 @@
                             <img src={`/src/assets/currency_logo/${market.market.replace('KRW-', '').toLowerCase()}_logo.png`} alt="Market Icon" class="h-6 w-6 rounded-full">
                             <span class="text-gray-900 font-medium">{market.market.replace('KRW-', '')}</span>
                         </td>
-                        <td class="px-4 py-2 whitespace-nowrap font-semibold {market.change_rate > 0 ? 'text-green-500' : 'text-red-500'}">
-                            {market.change_rate > 0 ? '+' : ''}{formatChangeRate(market.change_rate)}%
+                        <td class="px-4 py-2 whitespace-nowrap font-semibold {market.signed_change_rate > 0 ? 'text-green-500' : 'text-red-500'}">
+                            {market.signed_change_rate > 0 ? '+' : '-'}{formatChangeRate(market.change_rate)}%
                         </td>
                     </tr>
                 {/each}

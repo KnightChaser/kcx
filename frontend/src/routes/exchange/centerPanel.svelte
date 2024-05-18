@@ -59,7 +59,8 @@
             <div class="space-y-1 text-right">
                 <span class="text-2xl block text-gray-800">{formatCurrency(selectedMarket.trade_price)}</span>
                 <span class="block" class:text-red-500={selectedMarket.change === 'FALL'} class:text-green-500={selectedMarket.change === 'RISE'}>
-                    {selectedMarket.change === 'FALL' ? '-' : '+'}{formatCurrency(selectedMarket.signed_change_price)} ({(selectedMarket.change_rate * 100).toFixed(2)}%)
+                    <!-- Note that the "-" sign is already in from the given data  -->
+                    {selectedMarket.change === 'FALL' ? '' : '+'}{formatCurrency(selectedMarket.signed_change_price)} ({(selectedMarket.signed_change_rate * 100).toFixed(2)}%)
                 </span>
             </div>
         </div>

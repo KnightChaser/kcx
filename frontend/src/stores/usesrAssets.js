@@ -3,9 +3,22 @@ import { writable } from 'svelte/store';
 
 // Define the structure of the user's asset information
 export const balances = writable({
-    KRW: { amount: 0, estimatedValue: 0, fullname: "South Korean Won" },
+    KRW: { amount: 0, estimatedValue: 0, fullname: "South Korean Won" },        // fiat currency
+    ADA: { amount: 0, estimatedValue: 0, fullname: "Cardano" },
+    AVAX: { amount: 0, estimatedValue: 0, fullname: "Avalanche" },
+    BCH: { amount: 0, estimatedValue: 0, fullname: "Bitcoin Cash" },
     BTC: { amount: 0, estimatedValue: 0, fullname: "Bitcoin" },
+    DOT: { amount: 0, estimatedValue: 0, fullname: "Polkadot" },
+    ETC: { amount: 0, estimatedValue: 0, fullname: "Ethereum Classic" },
     ETH: { amount: 0, estimatedValue: 0, fullname: "Ethereum" },
+    HBAR: { amount: 0, estimatedValue: 0, fullname: "Hedera Hashgraph" },
+    LINK: { amount: 0, estimatedValue: 0, fullname: "Chainlink" },
+    MATIC: { amount: 0, estimatedValue: 0, fullname: "Polygon" },
+    NEAR: { amount: 0, estimatedValue: 0, fullname: "NEAR Protocol" },
+    SHIB: { amount: 0, estimatedValue: 0, fullname: "Shiba Inu" },
+    SOL: { amount: 0, estimatedValue: 0, fullname: "Solana" },
+    TRX: { amount: 0, estimatedValue: 0, fullname: "TRON" },
+    XEC: { amount: 0, estimatedValue: 0, fullname: "eCash" },
     XRP: { amount: 0, estimatedValue: 0, fullname: "Ripple" },
 });
 

@@ -25,6 +25,15 @@ export async function getBalance() {
 
         // Update the balances store with the fetched data
         const data = response.data;
+
+        // Remove any existing data whose keys ends with "_average_unit_price"
+        // It's not an asset, it's just an average unit price
+        for (const key in data) {
+            if (key.endsWith("_average_unit_price")) {
+                delete data[key];
+            }
+        }
+
         balances.update((b) => {
             // Update the balances store with the fetched data
             for (const [currency, amount] of Object.entries(data)) {

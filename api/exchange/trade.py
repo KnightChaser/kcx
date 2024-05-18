@@ -93,7 +93,8 @@ def buy_crypto(request: BuyCryptoSchema, db: Session = Depends(get_db), current_
         "amount": request.amount,
         "price": current_price,
         "total_price": total_buy_price,
-        "fee_rate": fee_rate
+        "fee_rate": fee_rate,
+        "fee": total_buy_price * fee_rate
     }
     return JSONResponse(content=response_data, status_code=200)
 
@@ -144,6 +145,7 @@ def sell_crypto(request: SellCryptoSchema, db: Session = Depends(get_db), curren
         "amount": request.amount,
         "price": current_price,
         "total_price": total_sell_price,
-        "fee_rate": fee_rate
+        "fee_rate": fee_rate,
+        "fee": total_sell_price * fee_rate
     }
     return JSONResponse(content=response_data, status_code=200)

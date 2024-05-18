@@ -17,9 +17,37 @@ class LoginSchema(BaseModel):
 # User balance schema
 class BalanceSchema(BaseModel):
     KRW: FiniteFloat
+    ADA: FiniteFloat
+    AVAX: FiniteFloat
+    BCH: FiniteFloat
     BTC: FiniteFloat
-    ETH: FiniteFloat
+    DOT: FiniteFloat
+    ETC: FiniteFloat
+    HBAR: FiniteFloat
+    LINK: FiniteFloat
+    MATIC: FiniteFloat
+    NEAR: FiniteFloat
+    SHIB: FiniteFloat
+    SOL: FiniteFloat
+    TRX: FiniteFloat
+    XEC: FiniteFloat
     XRP: FiniteFloat
+
+    ADA_average_unit_price: FiniteFloat
+    AVAX_average_unit_price: FiniteFloat
+    BCH_average_unit_price: FiniteFloat
+    BTC_average_unit_price: FiniteFloat
+    DOT_average_unit_price: FiniteFloat
+    ETC_average_unit_price: FiniteFloat
+    HBAR_average_unit_price: FiniteFloat
+    LINK_average_unit_price: FiniteFloat
+    MATIC_average_unit_price: FiniteFloat
+    NEAR_average_unit_price: FiniteFloat
+    SHIB_average_unit_price: FiniteFloat
+    SOL_average_unit_price: FiniteFloat
+    TRX_average_unit_price: FiniteFloat
+    XEC_average_unit_price: FiniteFloat
+    XRP_average_unit_price: FiniteFloat
 
 # User balance schema for deposit and withdraw
 class BalanceDepositWithdrawSchema(BaseModel):

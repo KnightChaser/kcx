@@ -29,7 +29,7 @@
     };
 </script>
 
-<div class="col-span-3 bg-white p-4 rounded border border-gray-300 space-y-4 shadow">
+<div class="col-span-3 bg-white p-4 border-gray-300 space-y-4">
     <div class="p-4 rounded border border-gray-300 bg-white shadow-sm">
         <h2 class="text-xl font-semibold mb-4 text-gray-800">Place Order</h2>
         <div class="space-y-4">

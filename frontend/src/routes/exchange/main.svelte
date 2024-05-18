@@ -6,6 +6,7 @@
     import { balances } from '../../stores/usesrAssets';
     import queryString from 'query-string';
     import CenterPanel from './centerPanel.svelte';
+    import OrderBookPanel from './orderBookPanel.svelte';
     import RightPanel from './rightPanel.svelte';
     import MarketSelectorModal from './MarketSelectorModal.svelte';
 
@@ -54,11 +55,14 @@
 </script>
 
 <main class="h-screen bg-gray-100 font-sans">
-    <div class="grid grid-cols-12 gap-4 p-4 h-full">
-        <div class="col-span-9 h-full">
+    <div class="grid grid-cols-10 h-full">
+        <div class="col-span-6 h-full">
             <CenterPanel {selectedMarket} {setShowModal} />
         </div>
-        <div class="col-span-3 h-full">
+        <div class="col-span-2 h-full">
+            <OrderBookPanel {selectedMarket} />
+        </div>
+        <div class="col-span-2 h-full">
             <RightPanel {selectedMarketCodeUnit} {availableBalance} {currentPrice} />
         </div>
         {#if showModal}

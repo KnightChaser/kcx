@@ -4,6 +4,7 @@
     import { formatCurrency } from '../../utils/formatCurrency';
     import { balances } from '../../stores/usesrAssets';
     import { buyCryptocurrency } from './functions/buycryptocurrency';
+    import { sellCryptocurrency } from './functions/sellCryptocurrency';
     import Swal from 'sweetalert2';
     
     export let selectedMarketCodeUnit;
@@ -14,22 +15,73 @@
     let totalValue = 0;
     let sliderValue = 0;  // Slider value to bind with input
 
+    // Get the user's KRW balance
     $: krwBalance = $balances.KRW.amount;
     $: totalValue = size * currentPrice;
 
+    // Automatically update the total value when the size changes
     const handleBuy = async () => {
         try {
-            if (isNaN(size)) {
-                Swal.fire('Error', 'Size must be a number', 'error');
+            if (isNaN(size) || size === 0) {
+                Swal.fire('Error', 'Size must be a non-zero number', 'error');
                 return;
             }
 
             const response = await buyCryptocurrency(selectedMarketCodeUnit, size);
             if (response.status === 200) {
-                Swal.fire('Success', 'Successfully bought the cryptocurrency', 'success');
+                Swal.fire({
+                    title: 'Success',
+                    html: 'Successfully bought the cryptocurrency<br>' + 
+                        'Bought: <strong>' + response.data.amount + ' ' + selectedMarketCodeUnit + '</strong><br>' +
+                        'Price: <strong>' + formatCurrency(response.data.price) + '</strong>',
+                    icon: 'success',
+                    showCancelButton: true,
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                })
             }
         } catch (error) {
-            Swal.fire('Error', 'Failed to buy the cryptocurrency', 'error');
+            Swal.fire({
+                title: 'Error',
+                text: 'Failed to buy the cryptocurrency. Check your balance and try again.',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#3085d6',
+            });
+        }
+    };
+
+    // Automatically update the total value when the slider changes
+    const handleSell = async () => {
+        try {
+            if (isNaN(size) || size === 0) {
+                Swal.fire('Error', 'Size must be a non-zero number', 'error');
+                return;
+            }
+
+            const response = await sellCryptocurrency(selectedMarketCodeUnit, size);
+            if (response.status === 200) {
+                Swal.fire({
+                    title: 'Success',
+                    html: 'Successfully sold the cryptocurrency<br>' + 
+                        'Sold: <strong>' + response.data.amount + ' ' + selectedMarketCodeUnit + '</strong><br>' +
+                        'Price: <strong>' + formatCurrency(response.data.price) + '</strong>',
+                    icon: 'success',
+                    showCancelButton: true,
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                })
+            }
+        } catch (error) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Failed to sell the cryptocurrency. Check your balance and try again.',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#3085d6',
+            })
         }
     };
 
@@ -95,7 +147,7 @@
             </table>
             <div class="flex space-x-2">
                 <button on:click={handleBuy} class="bg-blue-500 text-white w-full py-2 rounded hover:shadow-lg transition-shadow duration-300 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">BUY</button>
-                <button class="bg-red-500 text-white w-full py-2 rounded hover:shadow-lg transition-shadow duration-300 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-red-500">SELL</button>
+                <button on:click={handleSell}  class="bg-red-500 text-white w-full py-2 rounded hover:shadow-lg transition-shadow duration-300 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-red-500">SELL</button>
             </div>
         </div>
     </div>

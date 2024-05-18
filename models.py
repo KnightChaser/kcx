@@ -26,6 +26,7 @@ class Balance(Base):
     BTC                     = Column(Float, default=0)        # Bitcoin
     DOT                     = Column(Float, default=0)        # Polkadot
     ETC                     = Column(Float, default=0)        # Ethereum Classic
+    ETH                     = Column(Float, default=0)        # Ethereum
     HBAR                    = Column(Float, default=0)        # Hedera Hashgraph
     LINK                    = Column(Float, default=0)        # Chainlink
     MATIC                   = Column(Float, default=0)        # Polygon
@@ -42,6 +43,7 @@ class Balance(Base):
     BTC_average_unit_price  = Column(Float, default=0)        # Average unit price of BTC(Bitcoin)
     DOT_average_unit_price  = Column(Float, default=0)        # Average unit price of DOT(Polkadot)
     ETC_average_unit_price  = Column(Float, default=0)        # Average unit price of ETC(Ethereum Classic)
+    ETH_average_unit_price  = Column(Float, default=0)        # Average unit price of ETH(Ethereum)
     HBAR_average_unit_price = Column(Float, default=0)        # Average unit price of HBAR(Hedera Hashgraph)
     LINK_average_unit_price = Column(Float, default=0)        # Average unit price of LINK(Chainlink)
     MATIC_average_unit_price= Column(Float, default=0)        # Average unit price of MATIC(Polygon)

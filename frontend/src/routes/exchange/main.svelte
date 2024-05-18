@@ -1,3 +1,5 @@
+<!-- src/routes/exchange/main.svelte  -->
+
 <script>
     import { onMount } from 'svelte';
     import { getAllAvailableMarketsInfo } from './functions/getMarketInfo';
@@ -8,10 +10,11 @@
     import RightPanel from './rightPanel.svelte';
 
     // Exchange page components will share these variables to render the data
-    let marketData = [];
+    export let marketData = [];
     let selectedMarket = null;
     let selectedMarketCodeUnit = null;
     let availableBalance = 0;  // Change to a reactive variable
+    let currentPrice = 0;  // Current market price for selected market
 
     onMount(async () => {
         try {
@@ -24,6 +27,7 @@
 
             // Find the selected market from the market data
             selectedMarket = marketData.find(market => market.market === selectedMarketCode) || marketData[0];
+            currentPrice = selectedMarket.trade_price;
         } catch (error) {
             console.error(error);
         }
@@ -32,16 +36,18 @@
     function setSelectedMarket(market) {
         selectedMarket = market;
         selectedMarketCodeUnit = market.market.split('-')[1].toUpperCase();
+        currentPrice = market.trade_price;
     }
 
     // Update the available balance whenever the selected market changes
     $: selectedMarketCodeUnit = selectedMarket?.market.split('-')[1].toUpperCase();
     $: availableBalance = $balances[selectedMarketCodeUnit]?.amount ?? 0;
 
-    // Automatically gathers market information and refresh selectedaMarket for simultaneous updates, every 2 seconds
+    // Automatically gathers market information and refresh selectedMarket for simultaneous updates, every 2 seconds
     setInterval(async () => {
         marketData = await getAllAvailableMarketsInfo();
         selectedMarket = marketData.find(market => market.market === selectedMarket.market) || marketData[0];
+        currentPrice = selectedMarket.trade_price;
     }, 2000);
 
     // Automatically update the available balance when the user's assets change
@@ -49,7 +55,6 @@
     $: balances.subscribe(value => {
         availableBalance = value[selectedMarketCodeUnit]?.amount ?? 0;
     });
-
 </script>
 
 <main class="h-screen bg-gray-100 font-sans">
@@ -61,7 +66,7 @@
             <CenterPanel {selectedMarket} />
         </div>
         <div class="col-span-3 h-full">
-            <RightPanel {selectedMarketCodeUnit} {availableBalance} />
+            <RightPanel {selectedMarketCodeUnit} {availableBalance} {currentPrice} />
         </div>
     </div>
 </main>

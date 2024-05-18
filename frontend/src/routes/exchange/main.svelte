@@ -5,27 +5,23 @@
     import { getAllAvailableMarketsInfo } from './functions/getMarketInfo';
     import { balances } from '../../stores/usesrAssets';
     import queryString from 'query-string';
-    import LeftPanel from './leftPanel.svelte';
     import CenterPanel from './centerPanel.svelte';
     import RightPanel from './rightPanel.svelte';
+    import MarketSelectorModal from './MarketSelectorModal.svelte';
 
-    // Exchange page components will share these variables to render the data
     export let marketData = [];
     let selectedMarket = null;
     let selectedMarketCodeUnit = null;
-    let availableBalance = 0;  // Change to a reactive variable
-    let currentPrice = 0;  // Current market price for selected market
+    let availableBalance = 0;
+    let currentPrice = 0;
+    let showModal = false;
 
     onMount(async () => {
         try {
             marketData = await getAllAvailableMarketsInfo();
-
-            // Get the query string to decide which market to display
             const queryParameters = queryString.parse(window.location.search);
-            const selectedMarketCode = queryParameters.code || 'KRW-BTC';  // Default market is KRW-BTC (Bitcoin market)
-            selectedMarketCodeUnit = selectedMarketCode.toString().split('-')[1].toUpperCase();  // ex. "KRW-BTC" => "BTC"
-
-            // Find the selected market from the market data
+            const selectedMarketCode = queryParameters.code || 'KRW-BTC';
+            selectedMarketCodeUnit = selectedMarketCode.toString().split('-')[1].toUpperCase();
             selectedMarket = marketData.find(market => market.market === selectedMarketCode) || marketData[0];
             currentPrice = selectedMarket.trade_price;
         } catch (error) {
@@ -39,19 +35,19 @@
         currentPrice = market.trade_price;
     }
 
-    // Update the available balance whenever the selected market changes
+    function setShowModal(value) {
+        showModal = value;
+    }
+
     $: selectedMarketCodeUnit = selectedMarket?.market.split('-')[1].toUpperCase();
     $: availableBalance = $balances[selectedMarketCodeUnit]?.amount ?? 0;
 
-    // Automatically gathers market information and refresh selectedMarket for simultaneous updates, every 2 seconds
     setInterval(async () => {
         marketData = await getAllAvailableMarketsInfo();
         selectedMarket = marketData.find(market => market.market === selectedMarket.market) || marketData[0];
         currentPrice = selectedMarket.trade_price;
     }, 2000);
 
-    // Automatically update the available balance when the user's assets change
-    // Automatically update the market data when the user's assets change
     $: balances.subscribe(value => {
         availableBalance = value[selectedMarketCodeUnit]?.amount ?? 0;
     });
@@ -59,15 +55,15 @@
 
 <main class="h-screen bg-gray-100 font-sans">
     <div class="grid grid-cols-12 gap-4 p-4 h-full">
-        <div class="col-span-2 h-full">
-            <LeftPanel {marketData} {setSelectedMarket} />
-        </div>
-        <div class="col-span-7 h-full">
-            <CenterPanel {selectedMarket} />
+        <div class="col-span-9 h-full">
+            <CenterPanel {selectedMarket} {setShowModal} />
         </div>
         <div class="col-span-3 h-full">
             <RightPanel {selectedMarketCodeUnit} {availableBalance} {currentPrice} />
         </div>
+        {#if showModal}
+            <MarketSelectorModal {marketData} {setSelectedMarket} on:close={() => setShowModal(false)} />
+        {/if}
     </div>
 </main>
 

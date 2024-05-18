@@ -1,7 +1,10 @@
+<!-- routes/exchange/centerPanel.svelte -->
+
 <script>
     import { formatCurrency } from "../../utils/formatCurrency";
     import { onMount, afterUpdate } from 'svelte';
     export let selectedMarket;
+    export let setShowModal;
 
     $: selectedMarketCodeUnit = selectedMarket?.market.split('-')[1].toUpperCase();
 
@@ -24,7 +27,7 @@
             "allow_symbol_change": true,
             "calendar": false,
             "studies": [
-              "STD;Bollinger_Bands"
+                "STD;Bollinger_Bands"
             ],
             "support_host": "https://www.tradingview.com"
         });
@@ -55,11 +58,13 @@
             <div class="flex items-center space-x-2">
                 <img src="src/assets/currency_logo/{selectedMarket.market.replace('KRW-', '').toLowerCase()}_logo.png" alt="Market Icon" class="h-6 w-6 rounded-full">
                 <h2 class="text-2xl font-semibold text-gray-800">{selectedMarket.market.replace('KRW-', '')}</h2>
+                <button on:click={() => setShowModal(true)} class="ml-4 btn btn-primary">
+                    Select Market
+                </button>
             </div>
             <div class="space-y-1 text-right">
                 <span class="text-2xl block text-gray-800">{formatCurrency(selectedMarket.trade_price)}</span>
                 <span class="block" class:text-red-500={selectedMarket.change === 'FALL'} class:text-green-500={selectedMarket.change === 'RISE'}>
-                    <!-- Note that the "-" sign is already in from the given data  -->
                     {selectedMarket.change === 'FALL' ? '' : '+'}{formatCurrency(selectedMarket.signed_change_price)} ({(selectedMarket.signed_change_rate * 100).toFixed(2)}%)
                 </span>
             </div>
@@ -95,3 +100,19 @@
         <p class="text-center text-gray-500">Loading...</p>
     {/if}
 </div>
+
+<style>
+    .btn-primary {
+        background-color: #3490dc;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .btn-primary:hover {
+        background-color: #2779bd;
+    }
+</style>

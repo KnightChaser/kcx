@@ -24,3 +24,20 @@ class BalanceSchema(BaseModel):
 # User balance schema for deposit and withdraw
 class BalanceDepositWithdrawSchema(BaseModel):
     KRW: FiniteFloat = Field(..., gt=0, description="Amount of KRW to deposit or withdraw, must be greater than zero")
+
+# User buy/sell cryptocurrency schema
+class BuyCryptoSchema(BaseModel):
+    market_code:        str
+    amount:             FiniteFloat
+
+class SellCryptoSchema(BaseModel):
+    market_code:        str
+    amount:             FiniteFloat
+
+# User trading history schema
+class TradeHistorySchema(BaseModel):
+    currency:           str
+    amount:             FiniteFloat
+    price:              FiniteFloat
+    transaction_type:   str
+    leverage_ratio:     FiniteFloat

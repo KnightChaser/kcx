@@ -50,7 +50,7 @@
                     {#each marketData as market}
                         <tr class="cursor-pointer hover:bg-gray-100" on:click={() => handleMarketSelect(market)}>
                             <td class="px-4 py-2 whitespace-nowrap flex items-center space-x-2">
-                                <img src={`/src/assets/currency_logo/${market.market.replace('KRW-', '').toLowerCase()}_logo.png`} alt="Market Icon" class="h-6 w-6 rounded-full">
+                                <img src={`/src/assets/currency_logo/${market.market.replace('KRW-', '').toLowerCase()}_logo.png`} alt="Market Icon" class="h-6 w-6">
                                 <span class="text-gray-900 font-medium">{market.market.replace('KRW-', '')}</span>
                             </td>
                             <td class="px-4 py-2 whitespace-nowrap font-semibold {market.signed_change_rate > 0 ? 'text-green-500' : 'text-red-500'}">

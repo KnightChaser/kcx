@@ -1,6 +1,7 @@
 <!-- routes/exchange/centerPanel.svelte -->
 
 <script>
+    import { balances } from "../../stores/usesrAssets";
     import { formatCurrency } from "../../utils/formatCurrency";
     import { onMount, afterUpdate } from 'svelte';
     export let selectedMarket;
@@ -54,38 +55,53 @@
 
 <div class="col-span-7 bg-white p-4 rounded border border-gray-400">
     {#if selectedMarket}
-        <div class="flex justify-between items-center mb-4">
+        <div class="flex items-center justify-between">
+            <!-- market introduction  -->
             <div class="flex items-center space-x-2">
-                <img src="src/assets/currency_logo/{selectedMarket.market.replace('KRW-', '').toLowerCase()}_logo.png" alt="Market Icon" class="h-6 w-6 rounded-full">
-                <h2 class="text-2xl font-semibold text-gray-800">{selectedMarket.market.replace('KRW-', '')}</h2>
-                <button on:click={() => setShowModal(true)} class="ml-4 btn btn-primary">
-                    Select Market
-                </button>
-            </div>
-            <div class="space-y-1 text-right">
-                <span class="text-2xl block text-gray-800">{formatCurrency(selectedMarket.trade_price)}</span>
-                <span class="block" class:text-red-500={selectedMarket.change === 'FALL'} class:text-green-500={selectedMarket.change === 'RISE'}>
-                    {selectedMarket.change === 'FALL' ? '' : '+'}{formatCurrency(selectedMarket.signed_change_price)} ({(selectedMarket.signed_change_rate * 100).toFixed(2)}%)
-                </span>
-            </div>
-        </div>
-
-        <!-- Info Panel -->
-        <div class="p-2 rounded mb-4 border border-gray-400">
-            <div class="grid grid-cols-3 gap-4 text-center">
+                <img src="src/assets/currency_logo/{selectedMarket.market.replace('KRW-', '').toLowerCase()}_logo.png" alt="Market Icon" class="h-16 w-16">
                 <div>
-                    <p class="text-sm text-gray-500">24h High</p>
-                    <p class="text-lg font-semibold text-gray-800">{formatCurrency(selectedMarket.high_price)}</p>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-500">24h Low</p>
-                    <p class="text-lg font-semibold text-gray-800">{formatCurrency(selectedMarket.low_price)}</p>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-500">24h Volume (KRW)</p>
-                    <p class="text-lg font-semibold text-gray-800">{formatCurrency(selectedMarket.acc_trade_price_24h)}</p>
+                    <h2 class="text-4xl font-semibold text-gray-800">{selectedMarketCodeUnit}</h2>
+                    <h1 class="text-2xl font-semibold text-gray-500">{$balances[selectedMarketCodeUnit]?.fullname}</h1>
                 </div>
             </div>
+            <!-- market data -->
+            <div class="mb-4">
+                <table class="min-w-full bg-white divide-y divide-gray-200 shadow-md rounded-lg">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Trade Price</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">24h High</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">24h Low</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">24h Volume</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                <span class="text-2xl block text-gray-800">{formatCurrency(selectedMarket.trade_price)}</span>
+                                <span class="block {selectedMarket.change === 'FALL' ? 'text-red-500' : 'text-green-500'}">
+                                    {selectedMarket.change === 'FALL' ? '' : '+'}{formatCurrency(selectedMarket.signed_change_price)} ({(selectedMarket.signed_change_rate * 100).toFixed(2)}%)
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                <p class="text-lg font-semibold text-gray-800">{formatCurrency(selectedMarket.high_price)}</p>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                <p class="text-lg font-semibold text-gray-800">{formatCurrency(selectedMarket.low_price)}</p>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                <p class="text-lg font-semibold text-gray-800">{formatCurrency(selectedMarket.acc_trade_price_24h)}</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- chance market -->
+            <button on:click={() => setShowModal(true)} class="btn btn-primary flex items-center justify-center h-15 w-15 p-2 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                    <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+                </svg>
+            </button>
         </div>
 
         <!-- Trading Chart Area -->

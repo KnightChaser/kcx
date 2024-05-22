@@ -4,10 +4,14 @@
 
 from typing import Union
 import requests
+import redis
+import os
+import json
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
-from schemas import BuyCryptoSchema, SellCryptoSchema, TradeHistorySchema
+from schemas import BuyCryptoSchema, SellCryptoSchema
+from .market import get_cryptocurrency_ticker
 
 # Note that those packages are located in the parent directory
 import sys
@@ -19,29 +23,28 @@ from models import User, Balance, TradeHistory
 
 # Get the current price of the cryptocurrency from the original data source
 # Use price data from this so that the service is protected from the client request manipulation
-def get_current_crypto_price(market_code: str) -> Union[None, float]:
+async def get_current_crypto_price(market_code: str) -> Union[None, float]:
     if not market_code:
         return None
     
-    # Get the current price of the cryptocurrency
-    api_url: str = f"https://api.upbit.com/v1/ticker?markets=KRW-{market_code}"
-    response = requests.get(api_url)
-    if response.status_code != 200:
-        raise Exception(f"Failed to get the current price of the cryptocurrency(bad status code {response.status_code}), url {api_url}")
+    # Get the current price of the cryptocurrency from the Redis cache
+    market_data = await get_cryptocurrency_ticker(markets=market_code)
+    if not market_data:
+        return None
+    
+    # Convert JSONResponse to JSON
+    market_data = json.loads(market_data.body)
 
-    response_json = response.json()
-    if not response_json:
-        raise Exception(f"Failed to get the current price of the cryptocurrency(failed to convert the response into JSON), url {api_url}")
-
-    return float(response_json[0]["trade_price"])
+    return float(market_data[0]["trade_price"])
+    
 
 router: APIRouter = APIRouter()
 
 # Buy cryptocurrency (not leverage trading)
 @router.post("/exchange/trade/buy")
-def buy_crypto(request: BuyCryptoSchema, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)) -> JSONResponse:
+async def buy_crypto(request: BuyCryptoSchema, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)) -> JSONResponse:
     try:
-        current_price: float = get_current_crypto_price(request.market_code)
+        current_price: float = await get_current_crypto_price(f"KRW-{request.market_code}")
     except Exception as exception:
         raise HTTPException(status_code=500, detail=f"Failed to get the current price of the cryptocurrency: {str(exception)}")
 
@@ -100,9 +103,9 @@ def buy_crypto(request: BuyCryptoSchema, db: Session = Depends(get_db), current_
 
 # Sell cryptocurrency (not leverage trading)
 @router.post("/exchange/trade/sell")
-def sell_crypto(request: SellCryptoSchema, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)) -> JSONResponse:
+async def sell_crypto(request: SellCryptoSchema, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)) -> JSONResponse:
     try:
-        current_price: float = get_current_crypto_price(request.market_code)
+        current_price: float = await get_current_crypto_price(f"KRW-{request.market_code}")
     except Exception as exception:
         raise HTTPException(status_code=500, detail=f"Failed to get the current price of the cryptocurrency: {str(exception)}")
 

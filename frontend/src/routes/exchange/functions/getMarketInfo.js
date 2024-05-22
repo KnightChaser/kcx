@@ -19,7 +19,7 @@ export const getAllAvailableMarketsInfo = async () => {
     const marketRequestString = markets.join(',');
     try {
         const response = await axios.request({
-            url: `https://api.upbit.com/v1/ticker`,
+            url: `${BACKEND_API_URL}/exchange/market/ticker`,
             method: 'GET',
             params: { markets: marketRequestString }
         });

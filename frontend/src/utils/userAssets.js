@@ -58,9 +58,14 @@ export async function getBalance() {
 
 // Fetch ticker information from UpBit OpenAPI
 async function getTickerInformation(marketCodeListString) {
-    const response = await axios(
-        `https://api.upbit.com/v1/ticker?markets=${marketCodeListString}`
+    const response = await axios.request(
+        {
+            url: `${BACKEND_API_URL}/exchange/market/ticker`,
+            method: 'GET',
+            params: { markets: marketCodeListString }
+        }
     )
+
     if (response.status !== 200) {
         Swal.fire({
             title: "Error",
@@ -118,10 +123,14 @@ export async function calculateAssetValueInKRW() {
 
 // Return the current Bitcoin price in KRW (Only returns the price)
 async function getBTCPriceInKRW() {
-    const response = await axios(
-        "https://api.upbit.com/v1/ticker?markets=KRW-BTC"
-    );
-    
+    const response = await axios.request(
+        {
+            url: `${BACKEND_API_URL}/exchange/market/ticker`,
+            method: 'GET',
+            params: { markets: "KRW-BTC" }
+        }
+    )   
+
     if (response.status !== 200) {
         Swal.fire({
             title: "Error",

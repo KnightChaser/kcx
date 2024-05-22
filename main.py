@@ -27,12 +27,12 @@ async def lifespan(app: FastAPI):
     # Get Redis connection information from environment variables
     redis_host:str                  = os.getenv("REDIS_HOST", "localhost")
     redis_port:int                  = int(os.getenv("REDIS_PORT", 6379))
-    redis_db:int                    = int(os.getenv("REDIS_DB", 0))
+    redis_database:int              = int(os.getenv("REDIS_DATABASE", 0))
     update_interval_in_seconds:int  = int(os.getenv("UPDATE_INTERVAL_IN_SECONDS", 1))
-    console.log(f"Setting up the Redis database at {redis_host}:{redis_port}/{redis_db} (update interval: {update_interval_in_seconds} seconds)")
+    console.log(f"Setting up the Redis database at {redis_host}:{redis_port}/{redis_database} (update interval: {update_interval_in_seconds} seconds)")
     start_fetch_and_store_market_data(redis_host=redis_host, 
                                       redis_port=redis_port, 
-                                      database=redis_db,
+                                      database=redis_database,
                                       update_interval_in_seconds=update_interval_in_seconds
                                       )
 

@@ -4,6 +4,10 @@
 
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
+from typing import List, Dict, Any
+import redis
+import json
+import os
 
 # Note that those packages are located in the parent directory
 import sys
@@ -34,3 +38,22 @@ def get_cryptocurrency_list() -> JSONResponse:
             cryptocurrency_list.remove(column)
 
     return JSONResponse(content=cryptocurrency_list)
+
+# Get the market data of the cryptocurrency from this Redis cache
+@router.get("/exchange/market/ticker")
+async def get_cryptocurrency_ticker(markets: str = None) -> JSONResponse:
+    if not markets:
+        return JSONResponse(status_code=400, content="market_code_string is required")
+
+    market_list:List[str] = markets.split(",")
+    result:List[Dict[str, Any]] = []
+    for market in market_list:
+        redis_client = redis.Redis(host=os.getenv("REDIS_HOST"), 
+                                   port=os.getenv("REDIS_PORT"), 
+                                   db=os.getenv("REDIS_DATABASE"))
+        market_data = redis_client.get(market)
+        if market_data:
+            result.append(json.loads(market_data))
+        else:
+            result.append({market: "No data found"})
+    return JSONResponse(content=result)

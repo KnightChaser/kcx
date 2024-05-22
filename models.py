@@ -56,6 +56,10 @@ class Balance(Base):
 
     created_at              = Column(DateTime(timezone=True), server_default=func.now())
 
+# Market data for each currency.
+# To resolve the API quota issue, the market data is stored in our database that offers a free API for this project.
+# Periodically pulling the market data from the UPBIT exchange every
+
 # User money deposit and withdraw history, connected to the User table
 class DepositWithdrawHistory(Base):
     __tablename__           = "deposit_withdraw_history"

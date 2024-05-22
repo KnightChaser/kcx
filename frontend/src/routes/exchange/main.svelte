@@ -1,7 +1,7 @@
 <!-- src/routes/exchange/main.svelte  -->
 
 <script>
-    import { onMount } from 'svelte';
+    import { onMount, onDestroy } from 'svelte';
     import { getAllAvailableMarketsInfo } from './functions/getMarketInfo';
     import { balances } from '../../stores/usesrAssets';
     import queryString from 'query-string';
@@ -16,6 +16,7 @@
     let availableBalance = 0;
     let currentPrice = 0;
     let showModal = false;
+    let intervalId;
 
     onMount(async () => {
         try {
@@ -27,6 +28,18 @@
             currentPrice = selectedMarket.trade_price;
         } catch (error) {
             console.error(error);
+        }
+
+        intervalId = setInterval(async () => {
+            marketData = await getAllAvailableMarketsInfo();
+            selectedMarket = marketData.find(market => market.market === selectedMarket.market) || marketData[0];
+            currentPrice = selectedMarket.trade_price;
+        }, 2000);
+    });
+
+    onDestroy(() => {
+        if (intervalId) {
+            clearInterval(intervalId);
         }
     });
 
@@ -42,12 +55,6 @@
 
     $: selectedMarketCodeUnit = selectedMarket?.market.split('-')[1].toUpperCase();
     $: availableBalance = $balances[selectedMarketCodeUnit]?.amount ?? 0;
-
-    setInterval(async () => {
-        marketData = await getAllAvailableMarketsInfo();
-        selectedMarket = marketData.find(market => market.market === selectedMarket.market) || marketData[0];
-        currentPrice = selectedMarket.trade_price;
-    }, 2000);
 
     $: balances.subscribe(value => {
         availableBalance = value[selectedMarketCodeUnit]?.amount ?? 0;

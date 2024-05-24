@@ -14,7 +14,7 @@
 
     onMount(async () => {
         try {
-            const response = await axios.get(`${BACKEND_API_URL}/account/deposit_withdraw/history/`, {
+            const response = await axios.get(`${BACKEND_API_URL}/api/account/deposit_withdraw/history/`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }

@@ -44,7 +44,7 @@ def get_user_id_by_username(username:str, db:Session) -> Union[int | None]:
 router:APIRouter = APIRouter()
 
 # Login router
-@router.post("/account/login/")
+@router.post("/api/account/login/")
 def login(login: LoginSchema, db: Session = Depends(get_db)) -> Dict:
     # Check if the login information is arrived without any missing fields
     if not login.username or not login.password:
@@ -73,7 +73,7 @@ def login(login: LoginSchema, db: Session = Depends(get_db)) -> Dict:
             "uuid": user.uuid}
 
 # Register router
-@router.post("/account/register/")
+@router.post("/api/account/register/")
 def register(user: UserRegistrationSchema, db: Session = Depends(get_db)) -> Dict:
     # Check if the registration information is arrived without any missing fields
     if not user.username or not user.email or not user.password:

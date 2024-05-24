@@ -41,7 +41,7 @@ async def get_current_crypto_price(market_code: str) -> Union[None, float]:
 router: APIRouter = APIRouter()
 
 # Buy cryptocurrency (not leverage trading)
-@router.post("/exchange/trade/buy")
+@router.post("/api/exchange/trade/buy")
 async def buy_crypto(request: BuyCryptoSchema, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)) -> JSONResponse:
     try:
         current_price: float = await get_current_crypto_price(f"KRW-{request.market_code}")
@@ -102,7 +102,7 @@ async def buy_crypto(request: BuyCryptoSchema, db: Session = Depends(get_db), cu
     return JSONResponse(content=response_data, status_code=200)
 
 # Sell cryptocurrency (not leverage trading)
-@router.post("/exchange/trade/sell")
+@router.post("/api/exchange/trade/sell")
 async def sell_crypto(request: SellCryptoSchema, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)) -> JSONResponse:
     try:
         current_price: float = await get_current_crypto_price(f"KRW-{request.market_code}")

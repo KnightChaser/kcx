@@ -29,7 +29,7 @@ export async function depositKRW() {
 
             try {
                 const response = await axios.post(
-                    `${BACKEND_API_URL}/account/deposit/KRW`,
+                    `${BACKEND_API_URL}/api/account/deposit/KRW`,
                     { KRW },
                     {
                         headers: {

@@ -20,7 +20,7 @@ router:APIRouter = APIRouter()
 # Get the user's balance
 # We don't care how the balance model is implemented, just return the balance
 # ex) {"KRW": 1000000, "BTC": 0.1, "ETH": 0.5, "XRP": 1000}
-@router.get("/account/balance/")
+@router.get("/api/account/balance/")
 def get_balance(db:Session = Depends(get_db), current_user:User = Depends(get_current_user)) -> BalanceSchema:
     username:str = current_user["username"]
     user_id:int = get_user_id_by_username(username, db)
@@ -33,7 +33,7 @@ def get_balance(db:Session = Depends(get_db), current_user:User = Depends(get_cu
     return balance
 
 # Deposit money(KRW; fiat currency) to the user's account
-@router.post("/account/deposit/KRW", response_model=BalanceDepositWithdrawSchema)
+@router.post("/api/account/deposit/KRW", response_model=BalanceDepositWithdrawSchema)
 def deposit_KRW(deposit_balance: BalanceDepositWithdrawSchema, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)) -> BalanceDepositWithdrawSchema:
     # Deposit can't be a negative number
     if deposit_balance.KRW <= 0:
@@ -62,7 +62,7 @@ def deposit_KRW(deposit_balance: BalanceDepositWithdrawSchema, db: Session = Dep
     return BalanceDepositWithdrawSchema(KRW=account_balance.KRW)
 
 # Withdraw money(KRW; fiat currency) from the user's account
-@router.post("/account/withdraw/KRW", response_model=BalanceDepositWithdrawSchema)
+@router.post("/api/account/withdraw/KRW", response_model=BalanceDepositWithdrawSchema)
 def withdraw_KRW(withdraw_balance: BalanceDepositWithdrawSchema, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)) -> BalanceDepositWithdrawSchema:
     # Withdraw can't be a negative number
     if withdraw_balance.KRW <= 0:
@@ -100,7 +100,7 @@ def create_deposit_withdraw_history(DepositWithdrawHistory: DepositWithdrawHisto
     db.refresh(DepositWithdrawHistory)
 
 # Get the user's balance deposit and withdraw history
-@router.get("/account/deposit_withdraw/history/")
+@router.get("/api/account/deposit_withdraw/history/")
 def get_deposit_withdraw_history(db: Session = Depends(get_db), current_user: User = Depends(get_current_user), length:int = 20):
     username: str = current_user["username"]
     user_id: int = get_user_id_by_username(username, db)

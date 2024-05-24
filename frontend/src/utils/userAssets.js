@@ -13,7 +13,7 @@ const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL;
 // Fetch user's asset information from the backend
 export async function getBalance() {
     try {
-        const response = await axios(`${BACKEND_API_URL}/account/balance`, {
+        const response = await axios(`${BACKEND_API_URL}/api/account/balance`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -60,7 +60,7 @@ export async function getBalance() {
 async function getTickerInformation(marketCodeListString) {
     const response = await axios.request(
         {
-            url: `${BACKEND_API_URL}/exchange/market/ticker`,
+            url: `${BACKEND_API_URL}/api/exchange/market/ticker`,
             method: 'GET',
             params: { markets: marketCodeListString }
         }
@@ -125,7 +125,7 @@ export async function calculateAssetValueInKRW() {
 async function getBTCPriceInKRW() {
     const response = await axios.request(
         {
-            url: `${BACKEND_API_URL}/exchange/market/ticker`,
+            url: `${BACKEND_API_URL}/api/exchange/market/ticker`,
             method: 'GET',
             params: { markets: "KRW-BTC" }
         }

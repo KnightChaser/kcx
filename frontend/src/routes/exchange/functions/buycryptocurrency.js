@@ -9,7 +9,7 @@ const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL;
 export async function buyCryptocurrency(marketCode, amount) {
 
     try {
-        const response = await axios.post(`${BACKEND_API_URL}/exchange/trade/buy`, 
+        const response = await axios.post(`${BACKEND_API_URL}/api/exchange/trade/buy`, 
             {
                 market_code: marketCode,
                 amount: amount

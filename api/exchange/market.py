@@ -18,7 +18,7 @@ from models import Balance
 router:APIRouter = APIRouter()
 
 # Get the currently supported cryptocurrency list by this exchange
-@router.get("/exchange/market/list")
+@router.get("/api/exchange/market/list")
 def get_cryptocurrency_list() -> JSONResponse:
     # Available cryptocurrency lists are in the Balance model
     cryptocurrency_list = Balance.__table__.columns.keys()
@@ -40,7 +40,7 @@ def get_cryptocurrency_list() -> JSONResponse:
     return JSONResponse(content=cryptocurrency_list)
 
 # Get the market data of the cryptocurrency from this Redis cache
-@router.get("/exchange/market/ticker")
+@router.get("/api/exchange/market/ticker")
 async def get_cryptocurrency_ticker(markets: str = None) -> JSONResponse:
     if not markets:
         return JSONResponse(status_code=400, content="market_code_string is required")

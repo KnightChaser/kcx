@@ -13,7 +13,7 @@
     async function login() {
         try {
             // Call the backend API to login the user
-            const response = await axios.post(`${BACKEND_API_URL}/account/login`, {
+            const response = await axios.post(`${BACKEND_API_URL}/api/account/login`, {
                 username,
                 password
             });

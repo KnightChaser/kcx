@@ -1,23 +1,22 @@
+<!-- routes/exchange/main.svelte  -->
+
 <script>
     import { onMount, onDestroy } from 'svelte';
     import { getAllAvailableMarketsInfo } from './functions/getMarketInfo';
     import { balances } from '../../stores/usesrAssets';
     import queryString from 'query-string';
-    import CenterPanel from './centerPanel.svelte';
-    import OrderBookPanel from './orderBookPanel.svelte';
-    import RightPanel from './rightPanel.svelte';
-    import MarketSelectorModal from './MarketSelectorModal.svelte';
+    import CenterPanel from './CenterPanel.svelte';
+    import LeftPanel from './LeftPanel.svelte';
 
     export let marketData = [];             // Market data
     let selectedMarket = null;              // Selected market (the market that the user is currently viewing)
     let selectedMarketCodeUnit = null;      // The unit of the selected market
     let availableBalance = 0;               // The available balance of the selected market
     let currentPrice = 0;                   // The current price of the selected market
-    let showModal = false;                  // Show the market selector modal
     let intervalId;                         // The interval ID for fetching market data
 
-    let sortKey = '';                       // (Modal) The key to sort the market data by (e.g., market, change_rate, trade_price, acc_trade_price_24h
-    let sortOrder = 'asc';                  // (Modal) The sort order (asc for ascending, desc for descending)
+    let sortKey = '';                       // The key to sort the market data by (e.g., market, change_rate, trade_price, acc_trade_price_24h)
+    let sortOrder = 'asc';                  // The sort order (asc for ascending, desc for descending)
 
     onMount(async () => {
         try {
@@ -45,7 +44,6 @@
     });
 
     // Clear the interval when the component is destroyed
-    // If not, the interval will continue to run even after the component is destroyed (which is a resource leak)
     onDestroy(() => {
         if (intervalId) {
             clearInterval(intervalId);
@@ -59,12 +57,7 @@
         currentPrice = market.trade_price;
     }
 
-    // Show the market selector modal
-    function setShowModal(value) {
-        showModal = value;
-    }
-
-    // Handle the sorting of the market data (helper function for the MarketSelectorModal component)
+    // Handle the sorting of the market data
     function handleSort(event) {
         const { key } = event.detail;
         if (sortKey === key) {
@@ -76,7 +69,7 @@
         sortMarketData();
     }
 
-    // Sort the market data based on the sort key and sort order (helper function for the MarketSelectorModal component)
+    // Sort the market data based on the sort key and sort order
     function sortMarketData() {
         if (!sortKey) return;
 
@@ -101,18 +94,12 @@
 
 <main class="h-screen bg-gray-100 font-sans">
     <div class="grid grid-cols-10 h-full">
-        <div class="col-span-6 h-full">
-            <CenterPanel {selectedMarket} {setShowModal} />
+        <div class="col-span-3 h-full">
+            <LeftPanel {marketData} {setSelectedMarket} on:sort={handleSort} />
         </div>
-        <div class="col-span-2 h-full">
-            <OrderBookPanel {selectedMarket} />
+        <div class="col-span-7 h-full">
+            <CenterPanel {selectedMarket} {availableBalance} {currentPrice} />
         </div>
-        <div class="col-span-2 h-full">
-            <RightPanel {selectedMarketCodeUnit} {availableBalance} {currentPrice} />
-        </div>
-        {#if showModal}
-            <MarketSelectorModal {marketData} {setSelectedMarket} on:close={() => setShowModal(false)} on:sort={handleSort} />
-        {/if}
     </div>
 </main>
 

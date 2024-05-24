@@ -61,11 +61,3 @@ class BuyCryptoSchema(BaseModel):
 class SellCryptoSchema(BaseModel):
     market_code:        str
     amount:             FiniteFloat
-
-# User trading history schema
-class TradeHistorySchema(BaseModel):
-    currency:           str
-    amount:             FiniteFloat
-    price:              FiniteFloat
-    transaction_type:   str
-    leverage_ratio:     FiniteFloat

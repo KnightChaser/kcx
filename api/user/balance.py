@@ -4,7 +4,7 @@
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from models import DepositWithdrawHistory
+from models import DepositWithdrawHistory, TradeHistory
 from schemas import BalanceSchema, BalanceDepositWithdrawSchema
 from .authentication import get_current_user
 from .credentials import get_user_id_by_username
@@ -109,4 +109,16 @@ def get_deposit_withdraw_history(db: Session = Depends(get_db), current_user: Us
     
     # Get the user's deposit and withdraw history with the specified length, in descending order in terms of the creation time
     history = db.query(DepositWithdrawHistory).filter(DepositWithdrawHistory.user_id == user_id).order_by(DepositWithdrawHistory.created_at.desc()).limit(length).all()
+    return history
+
+# Get the user's crypto transaction history (buy/sell)
+@router.get("/api/account/crypto_trade/history/")
+def get_crypto_transaction_history(db: Session = Depends(get_db), current_user: User = Depends(get_current_user), length:int = 50):
+    username: str = current_user["username"]
+    user_id: int = get_user_id_by_username(username, db)
+    if not user_id:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    
+    # Get the user's crypto transaction history with the specified length, in descending order in terms of the creation time
+    history = db.query(TradeHistory).filter(TradeHistory.user_id == user_id).order_by(TradeHistory.created_at.desc()).limit(length).all()
     return history

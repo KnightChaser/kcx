@@ -40,6 +40,12 @@
                 on:click|preventDefault={() => moveToAnotherPage("/user/depositWithdrawHistory")}>
                 Wallet history
             </button>
+            <!-- Crypto trade(buy/sell) history -->
+            <button
+                class="px-4 py-2 bg-yellow-500 text-white font-semibold rounded-lg shadow-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-75"
+                on:click|preventDefault={() => moveToAnotherPage("/user/cryptoTradeHistory")}>
+                Crypto trade history
+            </button>
         </div>
     </div>
 </div>

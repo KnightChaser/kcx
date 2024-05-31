@@ -64,7 +64,7 @@
                             Price<br>
                             <span class="ml-1">&#9650;&#9660;</span>
                         </th>
-                        <th scope="col" class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" on:click={() => handleSort('change_rate')}>
+                        <th scope="col" class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" on:click={() => handleSort('signed_change_rate')}>
                             Change<br>
                             <span class="ml-1">&#9650;&#9660;</span>
                         </th>
@@ -84,8 +84,8 @@
                             <td class="px-4 py-2 whitespace-nowrap text-sm text-right text-gray-500">
                                 {formatCurrency(market.trade_price)}
                             </td>
-                            <td class="px-4 py-2 whitespace-nowrap font-semibold text-right {market.signed_change_rate > 0 ? 'text-green-500' : 'text-red-500'}">
-                                {market.signed_change_rate > 0 ? '+' : '-'}{formatChangeRate(market.change_rate)}%
+                            <td class="px-4 py-2 whitespace-nowrap font-semibold text-right {market.signed_change_rate > 0 ? 'text-green-500' : market.signed_change_rate === 0 ? 'text-gray-500' : 'text-red-500'}">
+                                {market.signed_change_rate > 0 ? '+' : ''}{formatChangeRate(market.signed_change_rate)}%
                             </td>
                             <td class="px-4 py-2 whitespace-nowrap text-sm text-right text-gray-500">
                                 {formatCurrency(market.acc_trade_price_24h / 1e6)}M
@@ -103,6 +103,6 @@
         height: 100%;
     }
     .overflow-y-auto {
-        max-height: calc(200vh - 440px);
+        max-height: calc(124vh);
     }
 </style>

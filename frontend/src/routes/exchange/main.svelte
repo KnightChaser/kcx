@@ -15,7 +15,7 @@
     let currentPrice = 0;                   // The current price of the selected market
     let intervalId;                         // The interval ID for fetching market data
 
-    let sortKey = '';                       // The key to sort the market data by (e.g., market, change_rate, trade_price, acc_trade_price_24h)
+    let sortKey = '';                       // The key to sort the market data by (e.g., market, signed_change_rate, trade_price, acc_trade_price_24h)
     let sortOrder = 'asc';                  // The sort order (asc for ascending, desc for descending)
 
     onMount(async () => {
@@ -74,10 +74,13 @@
         if (!sortKey) return;
 
         marketData = marketData.slice().sort((a, b) => {
-            if (a[sortKey] < b[sortKey]) {
+            const valueA = a[sortKey];
+            const valueB = b[sortKey];
+
+            if (valueA < valueB) {
                 return sortOrder === 'asc' ? -1 : 1;
             }
-            if (a[sortKey] > b[sortKey]) {
+            if (valueA > valueB) {
                 return sortOrder === 'asc' ? 1 : -1;
             }
             return 0;

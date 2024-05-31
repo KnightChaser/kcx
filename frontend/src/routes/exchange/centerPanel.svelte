@@ -173,11 +173,6 @@
                     </div>
                 </div>
             </div>
-
-            <div class="p-4 rounded border border-gray-300 bg-white shadow-sm">
-                <h2 class="text-xl font-semibold mb-4 text-gray-800">Your order history</h2>
-                <p class="text-gray-500">Your order</p>
-            </div>
         </div>
     {:else}
         <p class="text-center text-gray-500">Loading...</p>

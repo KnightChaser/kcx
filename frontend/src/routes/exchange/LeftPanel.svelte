@@ -103,6 +103,6 @@
         height: 100%;
     }
     .overflow-y-auto {
-        max-height: calc(200vh - 120px); /* Adjust according to your layout */
+        max-height: calc(200vh - 440px);
     }
 </style>

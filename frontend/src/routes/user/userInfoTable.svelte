@@ -14,7 +14,7 @@
     }
 </script>
 
-<div class="w-full max-w-2xl mb-6">
+<div class="w-full max-w-4xl mb-6">
     <div class="flex flex-col items-center p-6 bg-white rounded-xl shadow-md space-y-4" id="user_info_panel">
         <div class="text-center">
             <p class="text-2xl font-semibold text-gray-900">@{username}</p>
@@ -45,6 +45,12 @@
                 class="px-4 py-2 bg-yellow-500 text-white font-semibold rounded-lg shadow-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-75"
                 on:click|preventDefault={() => moveToAnotherPage("/user/cryptoTradeHistory")}>
                 Crypto trade history
+            </button>
+            <!-- User asset tracking -->
+            <button
+                class="px-4 py-2 bg-indigo-500 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-75"
+                on:click|preventDefault={() => moveToAnotherPage("/user/assetTracking")}>
+                Asset tracking
             </button>
         </div>
     </div>

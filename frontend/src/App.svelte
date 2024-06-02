@@ -46,6 +46,10 @@
             asyncComponent: () => import('./routes/user/cryptoTradeHistory.svelte'),
             conditions: [() => $auth]  // Ensure authenticated
         }),
+        '/user/assetTracking': wrap({
+            asyncComponent: () => import('./routes/user/assetTracking.svelte'),
+            conditions: [() => $auth]  // Ensure authenticated
+        }),
         '*': NotFound  // Load immediately
     };
 </script>

@@ -1,6 +1,9 @@
 fastapi==0.111.0
-pydantic==2.7.1
+pydantic==2.7.2
+PyJWT==2.8.0
 python-dotenv==1.0.1
-python_bcrypt==0.3.2
+bcrypt==4.1.2
+redis==5.0.4
+Requests==2.32.3
 rich==13.7.1
 SQLAlchemy==2.0.29

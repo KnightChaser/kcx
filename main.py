@@ -1,3 +1,5 @@
+# main.py
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -25,10 +27,10 @@ async def lifespan(app: FastAPI):
     load_dotenv()
 
     # Get Redis connection information from environment variables
-    redis_host:str                  = os.getenv("REDIS_HOST", "localhost")
+    redis_host:str                  = os.getenv("REDIS_HOST", "db-redis")  # Use new service name
     redis_port:int                  = int(os.getenv("REDIS_PORT", 6379))
-    redis_database:int              = int(os.getenv("REDIS_DATABASE", 0))
-    update_interval_in_seconds:int  = int(os.getenv("UPDATE_INTERVAL_IN_SECONDS", 1))
+    redis_database:int              = int(os.getenv("REDIS_DB", 0))
+    update_interval_in_seconds:int  = int(os.getenv("REDIS_UDPATE_INTERVAL_IN_SECONDS", 1))
     console.log(f"Setting up the Redis database at {redis_host}:{redis_port}/{redis_database} (update interval: {update_interval_in_seconds} seconds)")
     start_fetch_and_store_market_data(redis_host=redis_host, 
                                       redis_port=redis_port, 
@@ -69,7 +71,7 @@ async def lifespan(app: FastAPI):
         console.log(
             f"Test account created because it didn't exist [bold](UUID: {user_uuid})[/bold]")
 
-        # Manully insert the balance for the test account
+        # Manually insert the balance for the test account
         from models import Balance
         db = SessionLocal()
         new_balance = Balance(user_id=new_user.id,
@@ -85,11 +87,13 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 allowed_origins: list = [
-    "http://localhost:5173",
+    "http://localhost:5173",  # Vite dev server default
+    "http://localhost:4173",  # Vite preview default
+    "http://frontend:4173"    # Frontend service in Docker
 ]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

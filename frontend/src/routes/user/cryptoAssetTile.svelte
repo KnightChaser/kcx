@@ -29,15 +29,17 @@
         </tr>
         <tr>
             <td class="pr-2 font-medium">Entry Price</td>
-            <td class="text-right">{@html formatCurrency(averageUnitPrice)}</td>
+            <td class="text-right">{@html averageUnitPrice !== 0 ? formatCurrency(averageUnitPrice) : '-'}</td>
         </tr>
         <tr>
             <td class="pr-2 font-medium">Current Price</td>
-            <td class="text-right">{@html formatCurrency(currentPrice)}</td>
+            <td class="text-right">{@html currentPrice !== 0 ? formatCurrency(currentPrice) : '-'}</td>
         </tr>
         <tr>
             <td class="pr-2 font-medium">Profit</td>
-            <td class="text-right">{@html formatCurrency(profit)}<br>({profitRate}%)</td>
+            <td class="text-right">{@html profit !== 0 ? formatCurrency(profit) : '-'}<br>
+                                        {profitRate !== 0 ? '(' + profitRate.toString() + '%)' : ''}
+            </td>
         </tr>
     </table>
 </div>

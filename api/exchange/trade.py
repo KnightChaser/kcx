@@ -36,13 +36,16 @@ async def get_current_crypto_price(market_code: str) -> Union[None, float]:
     market_data = json.loads(market_data.body)
 
     return float(market_data[0]["trade_price"])
-    
 
 router: APIRouter = APIRouter()
 
 # Buy cryptocurrency (not leverage trading)
 @router.post("/api/exchange/trade/buy")
-async def buy_crypto(request: BuyCryptoSchema, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)) -> JSONResponse:
+async def buy_crypto(
+    request: BuyCryptoSchema,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+) -> JSONResponse:
     try:
         current_price: float = await get_current_crypto_price(f"KRW-{request.market_code}")
     except Exception as exception:
@@ -61,19 +64,21 @@ async def buy_crypto(request: BuyCryptoSchema, db: Session = Depends(get_db), cu
     if user_balance.KRW < total_buy_price:
         raise HTTPException(status_code=400, detail="Insufficient balance")
 
-    # Update the user's balance
-    user_balance.KRW -= total_buy_price
     crypto_amount_attr = request.market_code
     crypto_avg_price_attr = f"{request.market_code}_average_unit_price"
 
-    # Update cryptocurrency amount
-    setattr(user_balance, crypto_amount_attr, getattr(user_balance, crypto_amount_attr, 0) + request.amount)
-
-    # Update average unit price of the cryptocurrency asset that the target user has
     current_num_assets = getattr(user_balance, crypto_amount_attr, 0)
     current_avg_price = getattr(user_balance, crypto_avg_price_attr, 0)
 
-    new_avg_price = ((current_avg_price * current_num_assets) + (current_price * request.amount)) / (current_num_assets + request.amount)
+    # Calculate new number of assets and new average price
+    # (Calculating the entry price considering the average price of the existing assets)
+    new_num_assets = current_num_assets + request.amount
+    new_avg_price = ((current_avg_price * current_num_assets) + (current_price * request.amount)) / new_num_assets
+
+    # Update the user's balance
+    # (The value will be applied to the database)
+    user_balance.KRW -= total_buy_price
+    setattr(user_balance, crypto_amount_attr, new_num_assets)
     setattr(user_balance, crypto_avg_price_attr, new_avg_price)
 
     db.commit()
@@ -103,7 +108,11 @@ async def buy_crypto(request: BuyCryptoSchema, db: Session = Depends(get_db), cu
 
 # Sell cryptocurrency (not leverage trading)
 @router.post("/api/exchange/trade/sell")
-async def sell_crypto(request: SellCryptoSchema, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)) -> JSONResponse:
+async def sell_crypto(
+    request: SellCryptoSchema,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+) -> JSONResponse:
     try:
         current_price: float = await get_current_crypto_price(f"KRW-{request.market_code}")
     except Exception as exception:

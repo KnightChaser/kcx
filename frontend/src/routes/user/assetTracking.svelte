@@ -157,3 +157,13 @@
         {/each}
     </div>
 </div>
+
+<style>
+    button {
+        font-family: "SF Pro Display", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif !important;
+    }
+
+    div {
+        font-family: "SF Pro Display", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif !important;
+    }
+</style>

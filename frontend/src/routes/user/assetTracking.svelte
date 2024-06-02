@@ -7,6 +7,7 @@
     import { getAllAvailableMarketsInfo } from '../exchange/functions/getMarketInfo';   
     import CryptoAssetTile from './cryptoAssetTile.svelte';
     import TotalAssetTable from './totalAssetTable.svelte';
+    import ProfitTable from './profitTable.svelte';
     import axios from 'axios';
     import Swal from 'sweetalert2';
 
@@ -135,10 +136,12 @@
             totalAssetKRWTargetElement="#total-asset-krw" 
             totalAssetBTCTargetElement="#total-asset-btc"
         />
-        <div class="p-4 border rounded-lg shadow-md bg-gray-100">
-            <h3 class="text-xl font-semibold text-gray-900">Total Profit</h3>
-            <p class="text-lg text-gray-800">{totalProfit} KRW ({totalProfitRate.toFixed(2)}%)</p>
-        </div>
+        <ProfitTable 
+            totalProfit={totalProfit}
+            totalProfitRate={totalProfitRate}
+            totalProfitKRWTargetElement="#total-profit-krw"
+            totalProfitRateTargetElement="#total-profit-rate"
+        />
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">

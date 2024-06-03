@@ -11,7 +11,7 @@
     import { formatCurrency } from "../../utils/formatCurrency";
 
     function getAssetLogo(assetName) {
-        return `/src/assets/currency_logo/${assetName.toUpperCase()}_logo.png`;
+        return `/src/assets/currency_logo/${assetName.toLowerCase()}_logo.png`;
     }
 
     const assetLogo = getAssetLogo(assetName);

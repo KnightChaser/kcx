@@ -26,17 +26,22 @@ async def lifespan(app: FastAPI):
     # Load environment variables. So, we can use them in the application-wide
     load_dotenv()
 
-    # Get Redis connection information from environment variables
-    redis_host:str                  = os.getenv("REDIS_HOST", "db-redis")  # Use new service name
-    redis_port:int                  = int(os.getenv("REDIS_PORT", 6379))
-    redis_database:int              = int(os.getenv("REDIS_DB", 0))
-    update_interval_in_seconds:int  = int(os.getenv("REDIS_UDPATE_INTERVAL_IN_SECONDS", 1))
+    # Check if the current environment is in Docker
+    is_docker = os.getenv("IS_IN_KCX_BACKEND_DOCKER", "false").lower() == "true"
+    console.log(f"Running in Docker: {is_docker}")
+
+    # Get Redis connection information from environment variables and register the redis_host to $REDIS_HOST
+    redis_host = "db-redis" if is_docker else "localhost"
+    os.environ["REDIS_HOST"] = redis_host                   # Other modules can use this environment variable
+
+    redis_port = int(os.getenv("REDIS_PORT", 6379))
+    redis_database = int(os.getenv("REDIS_DB", 0))
+    update_interval_in_seconds = int(os.getenv("REDIS_UDPATE_INTERVAL_IN_SECONDS", 1))
     console.log(f"Setting up the Redis database at {redis_host}:{redis_port}/{redis_database} (update interval: {update_interval_in_seconds} seconds)")
     start_fetch_and_store_market_data(redis_host=redis_host, 
                                       redis_port=redis_port, 
                                       database=redis_database,
-                                      update_interval_in_seconds=update_interval_in_seconds
-                                      )
+                                      update_interval_in_seconds=update_interval_in_seconds)
 
     # Create all tables in the database
     from database import Base, engine
@@ -87,9 +92,14 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 allowed_origins: list = [
-    "http://localhost:5173",  # Vite dev server default
-    "http://localhost:4173",  # Vite preview default
-    "http://frontend:4173"    # Frontend service in Docker
+    # For localhost development
+    "http://localhost:4173",
+    "http://localhost:5173",
+    "http://localhost:8000",
+    "http://127.0.0.1:4173",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:8000",
+    "http://frontend:4173"  
 ]
 app.add_middleware(
     CORSMiddleware,

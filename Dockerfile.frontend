@@ -5,8 +5,8 @@ WORKDIR /app
 COPY frontend/package*.json ./
 RUN npm install
 COPY frontend .
-# No need to run the build step for development
-# RUN npm run build
+COPY frontend/certs/example_local_cert.pem /app/certs/example_local_cert.pem
+COPY frontend/certs/example_local_key.pem /app/certs/example_local_key.pem
 
 # Expose the port the dev server runs on
 EXPOSE 5173

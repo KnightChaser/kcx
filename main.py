@@ -92,13 +92,13 @@ app = FastAPI(lifespan=lifespan)
 
 allowed_origins: list = [
     # For localhost development
-    "http://localhost:4173",
-    "http://localhost:5173",
-    "http://localhost:8000",
-    "http://127.0.0.1:4173",
-    "http://127.0.0.1:5173",
-    "http://127.0.0.1:8000",
-    "http://frontend:4173"
+    "https://localhost:4173",
+    "https://localhost:5173",
+    "https://localhost:8000",
+    "https://kcx.knightchaser.com:4173",
+    "https://kcx.knightchaser.com:5173",
+    "https://kcx.knightchaser.com:8000",
+    "https://frontend:4173",
 ]
 app.add_middleware(
     CORSMiddleware,

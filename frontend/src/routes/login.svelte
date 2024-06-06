@@ -44,7 +44,7 @@
             if (error.response && error.response.status === 401) {
                 errorMessage = "Invalid username or password";
             } else {
-                errorMessage = "Failed to login";
+                errorMessage = "Failed to login: " + error.message;
             }
         }
     }

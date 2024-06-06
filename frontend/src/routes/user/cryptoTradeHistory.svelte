@@ -50,7 +50,7 @@
 
 <div class="w-full max-w-6xl mx-auto p-6 bg-white rounded-xl shadow-md space-y-6">
     <div class="flex justify-between items-center" id="history_table_header">
-        <h2 class="text-2xl font-semibold text-gray-900">Deposit/Withdraw History</h2>
+        <h2 class="text-2xl font-semibold text-gray-900">Crypto Trade History</h2>
         <button 
             class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
             on:click={moveToUserPage}>
@@ -70,6 +70,7 @@
                     <tr>
                         <th class="py-3 px-6 text-xs text-gray-500 uppercase tracking-wider text-center font-bold">Timestamp</th>
                         <th class="py-3 px-6 text-xs text-gray-500 uppercase tracking-wider text-center font-bold">Currency</th>
+                        <th class="py-3 px-6 text-xs text-gray-500 uppercase tracking-wider text-center font-bold">Type</th>
                         <th class="py-3 px-6 text-xs text-gray-500 uppercase tracking-wider text-center font-bold">Amount</th>
                         <th class="py-3 px-6 text-xs text-gray-500 uppercase tracking-wider text-center font-bold">Price</th>
                         <th class="py-3 px-6 text-xs text-gray-500 uppercase tracking-wider text-center font-bold">Total price</th>
@@ -85,6 +86,7 @@
                                     <span class="ml-2">{record.currency}</span>
                                 </div>
                             </td>
+                            <td class="py-2 px-6 whitespace-nowrap text-center">{record.transaction_type.toUpperCase()}</td>
                             <td class="py-2 px-6 whitespace-nowrap text-right">{@html formatAmount(record.amount)}</td>
                             <td class="py-2 px-6 whitespace-nowrap text-right">{@html formatAmount(record.price)}</td>
                             <td class="py-2 px-6 whitespace-nowrap text-right">{formatCurrency(Number(record.amount) * record.price)}</td>

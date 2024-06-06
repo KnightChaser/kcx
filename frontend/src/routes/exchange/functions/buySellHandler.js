@@ -1,10 +1,18 @@
 // routes/exchange/functions/sellCryptocurrency.js
-// Handle buying and selling cryptocurrencies acccording to the user request to the backend server(FastAPI)
 
 import { formatCurrency } from '../../../utils/formatCurrency';
 import { buyCryptocurrency } from './buycryptocurrency';
 import { sellCryptocurrency } from './sellCryptocurrency';
 import Swal from 'sweetalert2';
+
+// Helper function to limit decimal points
+const formatCryptoAmount = (amount) => {
+    return parseFloat(amount).toFixed(6);
+};
+
+const formatKRWAmount = (amount) => {
+    return Math.floor(amount).toLocaleString();
+};
 
 export const handleBuy = async (selectedMarketCodeUnit, size, currentPrice) => {
     try {
@@ -17,11 +25,13 @@ export const handleBuy = async (selectedMarketCodeUnit, size, currentPrice) => {
         if (response.status === 200) {
             Swal.fire({
                 title: 'Success',
-                html: 'Successfully bought the cryptocurrency<br>' + 
-                    'Bought: <strong>' + response.data.amount + ' ' + selectedMarketCodeUnit + '</strong><br>' +
-                    'Price: <strong>' + formatCurrency(response.data.price) + '</strong><br>' +
-                    'Total cost: <strong>' + formatCurrency(response.data.total_price) + '</strong><br>' +
-                    'Fee: <strong>' + formatCurrency(response.data.fee) + '</strong>',
+                html: `<div style="font-family: 'SF Pro Display';">
+                          Successfully bought the cryptocurrency<br>
+                          Bought: <strong>${formatCryptoAmount(response.data.amount)} ${selectedMarketCodeUnit}</strong><br>
+                          Price: <strong>${formatKRWAmount(response.data.price)} KRW</strong><br>
+                          Total cost: <strong>${formatKRWAmount(response.data.total_price)} KRW</strong><br>
+                          Fee: <strong>${formatKRWAmount(response.data.fee)} KRW</strong>
+                       </div>`,
                 icon: 'success',
                 showCancelButton: true,
                 confirmButtonText: 'OK',
@@ -51,11 +61,13 @@ export const handleSell = async (selectedMarketCodeUnit, size, currentPrice) => 
         if (response.status === 200) {
             Swal.fire({
                 title: 'Success',
-                html: 'Successfully sold the cryptocurrency<br>' + 
-                    'Sold: <strong>' + response.data.amount + ' ' + selectedMarketCodeUnit + '</strong><br>' +
-                    'Price: <strong>' + formatCurrency(response.data.price) + '</strong><br>' +
-                    'Total: <strong>' + formatCurrency(response.data.total_price) + '</strong><br>' +
-                    'Fee: <strong>' + formatCurrency(response.data.fee) + '</strong>',
+                html: `<div style="font-family: 'SF Pro Display';">
+                          Successfully sold the cryptocurrency<br>
+                          Sold: <strong>${formatCryptoAmount(response.data.amount)} ${selectedMarketCodeUnit}</strong><br>
+                          Price: <strong>${formatKRWAmount(response.data.price)} KRW</strong><br>
+                          Total: <strong>${formatKRWAmount(response.data.total_price)} KRW</strong><br>
+                          Fee: <strong>${formatKRWAmount(response.data.fee)} KRW</strong>
+                       </div>`,
                 icon: 'success',
                 showCancelButton: true,
                 confirmButtonText: 'OK',

@@ -5,10 +5,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from api.user.credentials import router as user_router
 from api.user.balance import router as balance_router
-from api.exchange.market import router as market_router
-from api.exchange.trade import router as trade_router
 from api.user.existence_check import check_existence
 from api.user.password import password_hash
+from api.statistics.statistics import router as service_statistics_router
+from api.exchange.market import router as market_router
+from api.exchange.trade import router as trade_router
 
 from tasks.fetch_and_store_market_data import start_fetch_and_store_market_data
 
@@ -111,3 +112,4 @@ app.include_router(user_router)
 app.include_router(balance_router)
 app.include_router(market_router)
 app.include_router(trade_router)
+app.include_router(service_statistics_router)

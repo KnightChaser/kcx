@@ -4,14 +4,12 @@
 
 from typing import Union
 import requests
-import redis
-import os
 import json
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from schemas import BuyCryptoSchema, SellCryptoSchema
-from .market import get_cryptocurrency_ticker
+from api.exchange.market import get_cryptocurrency_ticker
 
 # Note that those packages are located in the parent directory
 import sys
@@ -20,15 +18,16 @@ from database_session import get_sqlite3_db
 from ..user.authentication import get_current_user
 from ..user.credentials import get_user_id_by_username
 from models import User, Balance, TradeHistory
+from database_session import get_redis_db
 
 # Get the current price of the cryptocurrency from the original data source
 # Use price data from this so that the service is protected from the client request manipulation
-async def get_current_crypto_price(market_code: str) -> Union[None, float]:
+async def get_current_crypto_price(market_code: str, redis_client) -> Union[None, float]:
     if not market_code:
         return None
     
     # Get the current price of the cryptocurrency from the Redis cache
-    market_data = await get_cryptocurrency_ticker(markets=market_code)
+    market_data = await get_cryptocurrency_ticker(markets=market_code, redis_client=redis_client)
     if not market_data:
         return None
     
@@ -44,10 +43,11 @@ router: APIRouter = APIRouter()
 async def buy_crypto(
     request: BuyCryptoSchema,
     db: Session = Depends(get_sqlite3_db),
+    redis_client = Depends(get_redis_db),
     current_user: User = Depends(get_current_user)
 ) -> JSONResponse:
     try:
-        current_price: float = await get_current_crypto_price(f"KRW-{request.market_code}")
+        current_price: float = await get_current_crypto_price(f"KRW-{request.market_code}", redis_client)
     except Exception as exception:
         raise HTTPException(status_code=500, detail=f"Failed to get the current price of the cryptocurrency: {str(exception)}")
 
@@ -94,6 +94,9 @@ async def buy_crypto(
     db.add(new_trade_history)
     db.commit()
 
+    # Update the cumulative transaction amount in Redis
+    redis_client.incrbyfloat(f"total_transaction_amount:KRW", request.amount * current_price)
+
     # Return the response with data
     response_data: dict = {
         "message": "Successfully bought the cryptocurrency",
@@ -111,10 +114,11 @@ async def buy_crypto(
 async def sell_crypto(
     request: SellCryptoSchema,
     db: Session = Depends(get_sqlite3_db),
+    redis_client = Depends(get_redis_db),
     current_user: User = Depends(get_current_user)
 ) -> JSONResponse:
     try:
-        current_price: float = await get_current_crypto_price(f"KRW-{request.market_code}")
+        current_price: float = await get_current_crypto_price(f"KRW-{request.market_code}", redis_client)
     except Exception as exception:
         raise HTTPException(status_code=500, detail=f"Failed to get the current price of the cryptocurrency: {str(exception)}")
 
@@ -149,6 +153,9 @@ async def sell_crypto(
                                      leverage_ratio=1)
     db.add(new_trade_history)
     db.commit()
+
+    # Update the cumulative transaction amount in Redis
+    redis_client.incrbyfloat(f"total_transaction_amount:KRW", request.amount * current_price)
 
     # Return the response with data
     response_data: dict = {

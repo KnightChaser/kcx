@@ -39,7 +39,7 @@ def get_cryptocurrency_list() -> JSONResponse:
 
 # Get the market data of the cryptocurrency from this Redis cache
 @router.get("/api/exchange/market/ticker")
-async def get_cryptocurrency_ticker(markets: str = None, redis_client=Depends(get_redis_db)) -> JSONResponse:
+async def get_cryptocurrency_ticker(markets: str = None, redis_client = Depends(get_redis_db)) -> JSONResponse:
     if not markets:
         return JSONResponse(status_code=400, content="market_code_string is required")
 

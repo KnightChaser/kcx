@@ -1,11 +1,15 @@
+<!-- /src/welcome.svelte  -->
+
 <!-- A welcome page for who didn't log in (website introduction page)  -->
 <script>
     let isChecked = false;
+    import TotalTransactionAmountPanel from "./welcomePageComponents/totalTransactionAmountPanel.svelte";
 </script>
 
 <section class="wrapper">
     <div class={isChecked ? "hero dark" : "hero"}></div>
     <div class="content">
+        <TotalTransactionAmountPanel />
         <h1 class="h1--scalingSize" data-text="An awesome title">
             KCX
         </h1>
@@ -22,7 +26,8 @@
             "Helvetica", "Arial", sans-serif;
     }
 
-    /*houdini*/
+    /* the background effect */
+    /* houdini */
     @property --blink-opacity {
         syntax: "<number>";
         inherits: false;
@@ -75,7 +80,7 @@
         height: auto;
         position: relative;
     }
-
+    
     .hero {
         width: 100%;
         height: 100%;

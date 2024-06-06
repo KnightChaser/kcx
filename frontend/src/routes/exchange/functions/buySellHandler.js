@@ -7,7 +7,10 @@ import Swal from 'sweetalert2';
 
 // Helper function to limit decimal points
 const formatCryptoAmount = (amount) => {
-    return parseFloat(amount).toFixed(6);
+    let formatted = parseFloat(amount).toFixed(6);
+    // Add commas to the number
+    formatted = formatted.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return formatted;
 };
 
 const formatKRWAmount = (amount) => {

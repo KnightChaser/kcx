@@ -215,14 +215,14 @@
                             <tr>
                                 <td class="px-4 py-2 text-sm font-medium text-gray-900 w-1/3">Available Balance</td>
                                 <td class="px-4 py-2 text-sm text-right text-gray-900 font-semibold w-2/3">
-                                    {Math.floor(krwBalance)} 
-                                    <div class="text-sm text-gray-500">({(krwBalance / currentPrice).toFixed(4)} {selectedMarketCodeUnit})</div>
+                                    {formatWithCommas(Math.floor(krwBalance))} KRW 
+                                    <div class="text-sm text-gray-500">(≈ {formatWithCommas((krwBalance / currentPrice).toFixed(4))} {selectedMarketCodeUnit})</div>
                                 </td>
                             </tr>
                             <tr>
                                 <td class="px-4 py-2 text-sm font-medium text-gray-900 w-1/3">Available {selectedMarketCodeUnit}</td>
                                 <td class="px-4 py-2 text-sm text-right text-gray-900 font-semibold w-2/3">
-                                    {availableBalance.toFixed(4)} {selectedMarketCodeUnit}
+                                    {formatWithCommas(availableBalance.toFixed(4))} {selectedMarketCodeUnit}
                                 </td>
                             </tr>
                         </tbody>

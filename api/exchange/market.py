@@ -2,20 +2,18 @@
 # API routers for cryptocurrency market data (public)
 # These API routers should be open to the public, no authentication required
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from typing import List, Dict, Any
-import redis
 import json
-import os
 
 # Note that those packages are located in the parent directory
 import sys
 sys.path.append("..")
 from models import Balance
+from database_session import get_redis_db
 
-
-router:APIRouter = APIRouter()
+router: APIRouter = APIRouter()
 
 # Get the currently supported cryptocurrency list by this exchange
 @router.get("/api/exchange/market/list")
@@ -41,16 +39,13 @@ def get_cryptocurrency_list() -> JSONResponse:
 
 # Get the market data of the cryptocurrency from this Redis cache
 @router.get("/api/exchange/market/ticker")
-async def get_cryptocurrency_ticker(markets: str = None) -> JSONResponse:
+async def get_cryptocurrency_ticker(markets: str = None, redis_client=Depends(get_redis_db)) -> JSONResponse:
     if not markets:
         return JSONResponse(status_code=400, content="market_code_string is required")
 
-    market_list:List[str] = markets.split(",")
-    result:List[Dict[str, Any]] = []
+    market_list: List[str] = markets.split(",")
+    result: List[Dict[str, Any]] = []
     for market in market_list:
-        redis_client = redis.Redis(host=os.getenv("REDIS_HOST"), 
-                                   port=os.getenv("REDIS_PORT"), 
-                                   db=os.getenv("REDIS_DATABASE"))
         market_data = redis_client.get(market)
         if market_data:
             result.append(json.loads(market_data))

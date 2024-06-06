@@ -17,6 +17,7 @@ from rich.console import Console
 from dotenv import load_dotenv
 import os
 import uuid
+import redis
 
 # Start this application when the server starts
 @asynccontextmanager
@@ -30,18 +31,15 @@ async def lifespan(app: FastAPI):
     is_docker = os.getenv("IS_IN_KCX_BACKEND_DOCKER", "false").lower() == "true"
     console.log(f"Running in Docker: {is_docker}")
 
-    # Get Redis connection information from environment variables and register the redis_host to $REDIS_HOST
+    # Manually set up the Redis client
     redis_host = "db-redis" if is_docker else "localhost"
-    os.environ["REDIS_HOST"] = redis_host                   # Other modules can use this environment variable
-
     redis_port = int(os.getenv("REDIS_PORT", 6379))
     redis_database = int(os.getenv("REDIS_DB", 0))
+    redis_client = redis.Redis(host=redis_host, port=redis_port, db=redis_database)
+    console.log(f"Setting up the Redis database at {redis_host}:{redis_port}/{redis_database}")
+
     update_interval_in_seconds = int(os.getenv("REDIS_UDPATE_INTERVAL_IN_SECONDS", 1))
-    console.log(f"Setting up the Redis database at {redis_host}:{redis_port}/{redis_database} (update interval: {update_interval_in_seconds} seconds)")
-    start_fetch_and_store_market_data(redis_host=redis_host, 
-                                      redis_port=redis_port, 
-                                      database=redis_database,
-                                      update_interval_in_seconds=update_interval_in_seconds)
+    start_fetch_and_store_market_data(redis_client=redis_client, update_interval_in_seconds=update_interval_in_seconds)
 
     # Create all tables in the database
     from database import Base, engine
@@ -99,7 +97,7 @@ allowed_origins: list = [
     "http://127.0.0.1:4173",
     "http://127.0.0.1:5173",
     "http://127.0.0.1:8000",
-    "http://frontend:4173"  
+    "http://frontend:4173"
 ]
 app.add_middleware(
     CORSMiddleware,

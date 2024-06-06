@@ -1,0 +1,68 @@
+version: '3.12'
+
+networks:
+  kcx-network:
+    driver: bridge
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    env_file: 
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db-redis
+      - db-sqlite3
+    networks:
+      - kcx-network
+    volumes:
+      - ./database:/app/database
+    environment:
+      - IS_IN_KCX_BACKEND_DOCKER=TRUE
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    environment:
+      VITE_BASE_URL: "http://backend:8000"
+    networks:
+      - kcx-network
+
+  db-redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+    networks:
+      - kcx-network
+
+  db-sqlite3:
+    image: "nouchka/sqlite3"
+    volumes:
+      - ./database:/data
+    environment:
+      SQLITE_DATABASE: "/data/kcx.db"
+    ports:
+      - "8080:8080"
+    networks:
+      - kcx-network
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - /etc/letsencrypt:/etc/letsencrypt
+    depends_on:
+      - frontend
+    networks:
+      - kcx-network

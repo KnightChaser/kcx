@@ -78,7 +78,7 @@
     {#if selectedMarket}
         <div class="flex items-center justify-between border-b border-gray-400 p-2">
             <div class="flex items-center space-x-4 pl-2">
-                <img src="src/assets/currency_logo/{selectedMarket.market.replace('KRW-', '').toLowerCase()}_logo.png" alt="Market Icon" class="h-10 w-10">
+                <img src="/src/assets/currency_logo/{selectedMarket.market.replace('KRW-', '').toLowerCase()}_logo.png" alt="Market Icon" class="h-10 w-10">
                 <div>
                     <h2 class="text-3xl font-semibold text-gray-800">{selectedMarketCodeUnit}</h2>
                     <h1 class="text-lg font-medium text-gray-500">{$balances[selectedMarketCodeUnit]?.fullname}</h1>

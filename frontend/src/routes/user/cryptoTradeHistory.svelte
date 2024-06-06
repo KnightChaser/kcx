@@ -81,7 +81,7 @@
                             <td class="py-2 px-6 whitespace-nowrap text-center">{new Date(record.created_at).toLocaleString()}</td>
                             <td class="py-2 px-6 whitespace-nowrap text-center">
                                 <div class="flex items-center">
-                                    <img src={`src/assets/currency_logo/${String(record.currency).toLowerCase()}_logo.png`} alt={record.currency} width="25px">
+                                    <img src={`/src/assets/currency_logo/${String(record.currency).toLowerCase()}_logo.png`} alt={record.currency} width="25px">
                                     <span class="ml-2">{record.currency}</span>
                                 </div>
                             </td>

@@ -16,7 +16,7 @@ from .market import get_cryptocurrency_ticker
 # Note that those packages are located in the parent directory
 import sys
 sys.path.append("..")
-from database_session import get_db
+from database_session import get_sqlite3_db
 from ..user.authentication import get_current_user
 from ..user.credentials import get_user_id_by_username
 from models import User, Balance, TradeHistory
@@ -43,7 +43,7 @@ router: APIRouter = APIRouter()
 @router.post("/api/exchange/trade/buy")
 async def buy_crypto(
     request: BuyCryptoSchema,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_sqlite3_db),
     current_user: User = Depends(get_current_user)
 ) -> JSONResponse:
     try:
@@ -110,7 +110,7 @@ async def buy_crypto(
 @router.post("/api/exchange/trade/sell")
 async def sell_crypto(
     request: SellCryptoSchema,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_sqlite3_db),
     current_user: User = Depends(get_current_user)
 ) -> JSONResponse:
     try:

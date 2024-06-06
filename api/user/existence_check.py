@@ -9,14 +9,6 @@ import sys
 sys.path.append("..")
 from models import User
 
-# Dependency to get the database session
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 # Return boolean value if the user exists in the database
 def check_existence(username:str, email:str) -> bool:
     db = SessionLocal()

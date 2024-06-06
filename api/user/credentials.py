@@ -15,7 +15,7 @@ import sys
 sys.path.append("..")
 from models import User, Balance
 from api.user.password import password_hash, password_verify
-from database_session import get_db
+from database_session import get_sqlite3_db
 
 # Create a JWT token (access token) for the user who logged in
 def create_access_token(data: Dict, secret_key:str = None, expires_delta: datetime.timedelta = None) -> str:
@@ -45,7 +45,7 @@ router:APIRouter = APIRouter()
 
 # Login router
 @router.post("/api/account/login/")
-def login(login: LoginSchema, db: Session = Depends(get_db)) -> Dict:
+def login(login: LoginSchema, db: Session = Depends(get_sqlite3_db)) -> Dict:
     # Check if the login information is arrived without any missing fields
     if not login.username or not login.password:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username or password is missing")
@@ -74,7 +74,7 @@ def login(login: LoginSchema, db: Session = Depends(get_db)) -> Dict:
 
 # Register router
 @router.post("/api/account/register/")
-def register(user: UserRegistrationSchema, db: Session = Depends(get_db)) -> Dict:
+def register(user: UserRegistrationSchema, db: Session = Depends(get_sqlite3_db)) -> Dict:
     # Check if the registration information is arrived without any missing fields
     if not user.username or not user.email or not user.password:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username, email, or password is missing")

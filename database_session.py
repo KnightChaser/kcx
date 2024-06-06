@@ -3,7 +3,7 @@
 
 from database import SessionLocal
 
-def get_db():
+def get_sqlite3_db():
     db = SessionLocal()
     try:
         yield db

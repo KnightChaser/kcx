@@ -16,7 +16,7 @@
 
     onMount(async () => {
         try {
-            const response = await axios.get(`${BACKEND_API_URL}/api/account/crypto_trade/history/`, {
+            const response = await axios.get(`${BACKEND_API_URL}/account/crypto_trade/history/`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }

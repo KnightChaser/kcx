@@ -16,7 +16,7 @@
 
     // Function to fetch total transaction amount
     function fetchTotalTransactionAmount() {
-        axios.get(`${BACKEND_API_URL}/api/statistics/total-transaction-amount`)
+        axios.get(`${BACKEND_API_URL}/statistics/total-transaction-amount`)
             .then(response => {
                 // Access the KRW value from the response data
                 totalTransactionAmount.set(response.data.KRW);

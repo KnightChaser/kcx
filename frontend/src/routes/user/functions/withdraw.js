@@ -28,7 +28,7 @@ export async function withdrawKRW() {
 
             try {
                 const response = await axios.post(
-                    `${BACKEND_API_URL}/api/account/withdraw/KRW`,
+                    `${BACKEND_API_URL}/account/withdraw/KRW`,
                     { KRW },
                     {
                         headers: {

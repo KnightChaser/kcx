@@ -23,7 +23,7 @@
         }
 
         // Call the backend API to register the user
-        const response = await axios.post(`${BACKEND_API_URL}/api/account/register`, {
+        const response = await axios.post(`${BACKEND_API_URL}/account/register`, {
             username,
             email,
             password,

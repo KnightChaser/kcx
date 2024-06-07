@@ -13,9 +13,6 @@ services:
       - .env
     ports:
       - "8000:8000"
-    depends_on:
-      - db-redis
-      - db-sqlite3
     networks:
       - kcx-network
     volumes:
@@ -32,7 +29,7 @@ services:
     depends_on:
       - backend
     environment:
-      VITE_BASE_URL: "http://backend:8000"
+      - VITE_BACKEND_API_URL=https://kcx.knightchaser.com/api
     networks:
       - kcx-network
 
@@ -48,7 +45,7 @@ services:
     volumes:
       - ./database:/data
     environment:
-      SQLITE_DATABASE: "/data/kcx.db"
+      - SQLITE_DATABASE=/data/kcx.db
     ports:
       - "8080:8080"
     networks:
@@ -64,5 +61,6 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt
     depends_on:
       - frontend
+      - backend
     networks:
       - kcx-network

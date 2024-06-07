@@ -40,7 +40,7 @@
     async function fetchAndCalculateData() {
         try {
             // Fetch balance data
-            const balanceResponse = await axios.get(`${BACKEND_API_URL}/api/account/balance/`, {
+            const balanceResponse = await axios.get(`${BACKEND_API_URL}/account/balance/`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }

@@ -1,12 +1,7 @@
-import { defineConfig } from 'vite';
-import svelte from '@sveltejs/vite-plugin-svelte';
-import { mkcert } from 'vite-plugin-mkcert';
+import { defineConfig } from 'vite'
+import { svelte } from '@sveltejs/vite-plugin-svelte'
 
+// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [svelte(), mkcert()],
-  server: {
-    https: true,
-    host: true,
-    port: 5173,
-  },
-});
+  plugins: [svelte()],
+})

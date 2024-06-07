@@ -1,14 +1,12 @@
-import { defineConfig } from 'vite'
-import { svelte } from '@sveltejs/vite-plugin-svelte'
-import fs from 'fs';
+import { defineConfig } from 'vite';
+import svelte from '@sveltejs/vite-plugin-svelte';
+import mkcert from 'vite-plugin-mkcert';
 
-// https://vitejs.dev/config/
 export default defineConfig({
+  plugins: [svelte(), mkcert()],
   server: {
-    https: {
-      key: fs.readFileSync('./certs/example_local_key.pem'),
-      cert: fs.readFileSync('./certs/example_local_cert.pem')
-    }
+    https: true,
+    host: true,
+    port: 5173,
   },
-  plugins: [svelte()],
-})
+});

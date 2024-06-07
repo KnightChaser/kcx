@@ -5,8 +5,8 @@
     import { getAllAvailableMarketsInfo } from './functions/getMarketInfo';
     import { balances } from '../../stores/usesrAssets';
     import queryString from 'query-string';
-    import CenterPanel from './CenterPanel.svelte';
-    import LeftPanel from './LeftPanel.svelte';
+    import CenterPanel from './centerPanel.svelte';
+    import LeftPanel from './leftPanel.svelte';
 
     export let marketData = [];             // Market data
     let selectedMarket = null;              // Selected market (the market that the user is currently viewing)

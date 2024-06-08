@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import "cropperjs/dist/cropper.css";
 
 const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL;
+const token = localStorage.getItem("token");
 
 // Function to set the profile image of the user. (upload and crop)
 export function profileImageSetter() {
@@ -86,7 +87,8 @@ async function uploadCroppedImage(blob) {
             method: "POST",
             body: formData,
             headers: {
-                "Accept": "application/json"
+                "Accept": "application/json",
+                "Authorization": `Bearer ${token}` 
             }
         });
         if (!response.ok) {
@@ -95,6 +97,7 @@ async function uploadCroppedImage(blob) {
         Swal.fire({
             icon: "success",
             title: "Image uploaded successfully",
+            text: "Changes will be visible if you refresh the page."
         });
     } catch (error) {
         Swal.fire({

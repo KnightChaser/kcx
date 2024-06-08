@@ -1,5 +1,7 @@
 <!-- routes/user/userInfoTable.svelte -->
 
+<!-- routes/user/userInfoTable.svelte -->
+
 <script>
     import { push } from "svelte-spa-router";
     import Swal from "sweetalert2";
@@ -11,7 +13,6 @@
     import { profileImageSetter } from "./functions/profileImageSetter";
  
     const username = localStorage.getItem('username');
-    const token = localStorage.getItem('token');
     const uuid = localStorage.getItem('uuid');
     const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL;
 
@@ -20,10 +21,9 @@
     onMount(async () => {
         // Fetch user profile image
         try {
-            const response = await axios.get(`${BACKEND_API_URL}/account/get-profile-image/`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                },
+            const response = await axios.post(`${BACKEND_API_URL}/account/get-profile-image/`, new URLSearchParams({
+                username: username
+            }), {
                 responseType: 'arraybuffer' // Ensure the response is in binary format
             });
 
@@ -36,7 +36,7 @@
         } catch (error) {
             console.error("Error fetching user profile image:", error);
             profileImageUrl = ''; // No profile image found, use default
-        }        
+        }
     });
 
     function moveToAnotherPage(path) {

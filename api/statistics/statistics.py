@@ -3,21 +3,23 @@
 
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
-from typing import Dict
-from database_session import get_redis_db
+from sqlalchemy.orm import Session
+from database_session import get_sqlite3_db
+from models import Statistics
 
 router: APIRouter = APIRouter()
 
 # Get the statistics data of the total amount of cryptocurrency traded
 @router.get("/api/statistics/total-transaction-amount")
-async def get_total_transactions(redis_client = Depends(get_redis_db)) -> JSONResponse:
+async def get_total_transactions(db: Session = Depends(get_sqlite3_db)) -> JSONResponse:
     try:
-        keys = redis_client.keys("total_transaction_amount:*")
-        total_transactions: Dict[str, float] = {}
-        for key in keys:
-            market_code = key.decode("utf-8").split(":")[1]
-            total_amount = float(redis_client.get(key))
-            total_transactions[market_code] = total_amount
+        statistics = db.query(Statistics).first()
+        if not statistics:
+            return JSONResponse(content={"KRW": 0.0}, status_code=200)
+        
+        total_transactions = {
+            "KRW": statistics.total_transaction_amount
+        }
         return JSONResponse(content=total_transactions, status_code=200)
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)

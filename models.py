@@ -126,3 +126,9 @@ class TradeHistory(Base):
     transaction_type        = Column(String)                   # Transaction type (buy, sell)
     leverage_ratio          = Column(Float)                    # Leverage ratio (1, 2, 3, ...) (Leverage trading is not supported in this project for now, future work)
     created_at              = Column(DateTime(timezone=True), server_default=func.now())
+
+# Statistics of the this project
+class Statistics(Base):
+    __tablename__               = "statistics"
+    id                          = Column(Integer, primary_key=True, index=True)
+    total_transaction_amount    = Column(Float, default=0)

@@ -3,7 +3,6 @@
 # These API routers should be protected by authentication
 
 from typing import Union
-import requests
 import json
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException
@@ -17,7 +16,7 @@ sys.path.append("..")
 from database_session import get_sqlite3_db
 from ..user.authentication import get_current_user
 from ..user.credentials import get_user_id_by_username
-from models import User, Balance, TradeHistory
+from models import User, Balance, TradeHistory, Statistics
 from database_session import get_redis_db
 
 # Get the current price of the cryptocurrency from the original data source
@@ -94,8 +93,15 @@ async def buy_crypto(
     db.add(new_trade_history)
     db.commit()
 
-    # Update the cumulative transaction amount in Redis
-    redis_client.incrbyfloat(f"total_transaction_amount:KRW", request.amount * current_price)
+    # Add the total transaction amount to the statistics
+    # (The value will be applied to the database)
+    statistics = db.query(Statistics).first()
+    if not statistics:
+        statistics = Statistics(total_transaction_amount=total_buy_price)
+        db.add(statistics)
+    else:
+        statistics.total_transaction_amount += total_buy_price
+    db.commit()
 
     # Return the response with data
     response_data: dict = {
@@ -154,8 +160,13 @@ async def sell_crypto(
     db.add(new_trade_history)
     db.commit()
 
-    # Update the cumulative transaction amount in Redis
-    redis_client.incrbyfloat(f"total_transaction_amount:KRW", request.amount * current_price)
+    # Add the total transaction amount to the statistics
+    statistics = db.query(Statistics).first()
+    if not statistics:
+        statistics = Statistics(total_transaction_amount=total_sell_price)
+        db.add(statistics)
+    else:
+        statistics.total_transaction_amount += total_sell_price
 
     # Return the response with data
     response_data: dict = {

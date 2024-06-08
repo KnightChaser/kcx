@@ -27,20 +27,15 @@
                 responseType: 'arraybuffer' // Ensure the response is in binary format
             });
 
-            // We get the image data in binary format, so we need to convert it to base64 :)
+            // We get the image data in binary format, so we need to convert it to base64
             const base64Image = btoa(
                 new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), '')
             );
 
             profileImageUrl = `data:image/png;base64,${base64Image}`;
-        } catch(error) {
+        } catch (error) {
             console.error("Error fetching user profile image:", error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Failed to fetch user profile image',
-                text: error.message,
-            });
-            profileImageUrl = '/path/to/default/image.png'; // fallback image
+            profileImageUrl = ''; // No profile image found, use default
         }        
     });
 
@@ -52,7 +47,13 @@
 <div class="w-full max-w-4xl mb-6">
     <div class="flex flex-col items-center p-6 bg-white rounded-xl shadow-md space-y-4" id="user_info_panel">
         <div class="text-center">
-            <img src={profileImageUrl} alt="Profile" class="w-32 h-32 rounded-full mx-auto mb-4"/>
+            {#if profileImageUrl}
+                <img src={profileImageUrl} alt="Profile" class="w-32 h-32 rounded-full mx-auto mb-4"/>
+            {:else}
+                <div class="w-32 h-32 rounded-full mx-auto mb-4 bg-gray-300 flex items-center justify-center text-4xl text-gray-600">
+                    ?
+                </div>
+            {/if}
             <p class="text-2xl font-semibold text-gray-900">@{username}</p>
             <p class="text-sm text-gray-500">Your uuid (identifier): <code>{uuid}</code></p>
         </div>

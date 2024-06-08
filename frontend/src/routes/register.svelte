@@ -22,20 +22,40 @@
             return;
         }
 
-        // Call the backend API to register the user
-        const response = await axios.post(`${BACKEND_API_URL}/account/register`, {
-            username,
-            email,
-            password,
-        });
-        
-        // If not successful, show an error message
-        if (response.status !== 200) {
-            Swal.fire({
-                title: "Error",
-                text: "An error occurred while creating the account.",
-                icon: "error",
+        try {
+            // Call the backend API to register the user
+            const response = await axios.post(`${BACKEND_API_URL}/account/register`, {
+                username,
+                email,
+                password,
             });
+            
+            // If not successful, show an error message
+            if (response.status !== 200) {
+                console.error("Error registering user:", response.data);
+                Swal.fire({
+                    title: "Error",
+                    text: "An error occurred while creating the account.",
+                    icon: "error",
+                });
+                return;
+            }
+        } catch (error) {
+            // If the response code is 409 (Conflict), it means the username or email already exists
+            if (error.response.status === 409) {
+                Swal.fire({
+                    title: "Error",
+                    text: "Username or email already exists.",
+                    icon: "error",
+                });
+            } else {
+                console.error("Error registering user:", error);
+                Swal.fire({
+                    title: "Error",
+                    text: "An error occurred while creating the account.",
+                    icon: "error",
+                });
+            }
             return;
         }
 

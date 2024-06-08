@@ -23,6 +23,7 @@
     "axios": "^1.6.8",
     "bootstrap": "^5.3.3",
     "countup.js": "^2.8.0",
+    "cropperjs": "^1.6.2",
     "odometer_countup": "^1.0.4",
     "query-string": "^9.0.0",
     "svelte-spa-router": "^4.0.1",

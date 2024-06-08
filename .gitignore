@@ -3,3 +3,4 @@ kcx.db
 *.db
 *.db-journal
 database
+data

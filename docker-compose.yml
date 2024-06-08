@@ -19,7 +19,8 @@ services:
     networks:
       - kcx-network
     volumes:
-      - ./database:/app/database  # Ensure the backend has access to the database files
+      - ./database:/app/database
+      - ./data:/app/data 
     environment:
       - IS_IN_KCX_BACKEND_DOCKER=TRUE
 

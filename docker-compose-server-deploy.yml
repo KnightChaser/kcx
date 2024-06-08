@@ -17,6 +17,7 @@ services:
       - kcx-network
     volumes:
       - ./database:/app/database
+      - ./data:/app/data
     environment:
       - IS_IN_KCX_BACKEND_DOCKER=TRUE
 

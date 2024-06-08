@@ -9,6 +9,7 @@ from typing import Dict, Union
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+# Get the current username from the JWT token if it's valid
 # Authorization: `Bearer ${localStorage.getItem("token")}`, where the token is a JWT token
 def get_current_user(token:str = Depends(oauth2_scheme)) -> Union[HTTPException, str]:
     try:

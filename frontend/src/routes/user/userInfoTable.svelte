@@ -1,13 +1,48 @@
 <!-- routes/user/userInfoTable.svelte -->
+
 <script>
-    import Swal from "sweetalert2";
     import { push } from "svelte-spa-router";
+    import Swal from "sweetalert2";
+    import { onMount } from "svelte";
+    import axios from "axios";
+
+    import { depositKRW } from "./functions/deposit";
+    import { withdrawKRW } from "./functions/withdraw";
+    import { profileImageSetter } from "./functions/profileImageSetter";
+ 
     const username = localStorage.getItem('username');
     const token = localStorage.getItem('token');
     const uuid = localStorage.getItem('uuid');
     const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL;
-    import { depositKRW } from "./functions/deposit";
-    import { withdrawKRW } from "./functions/withdraw";
+
+    let profileImageUrl = '';
+
+    onMount(async () => {
+        // Fetch user profile image
+        try {
+            const response = await axios.get(`${BACKEND_API_URL}/account/get-profile-image/`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                responseType: 'arraybuffer' // Ensure the response is in binary format
+            });
+
+            // We get the image data in binary format, so we need to convert it to base64 :)
+            const base64Image = btoa(
+                new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), '')
+            );
+
+            profileImageUrl = `data:image/png;base64,${base64Image}`;
+        } catch(error) {
+            console.error("Error fetching user profile image:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Failed to fetch user profile image',
+                text: error.message,
+            });
+            profileImageUrl = '/path/to/default/image.png'; // fallback image
+        }        
+    });
 
     function moveToAnotherPage(path) {
         push(path);
@@ -17,6 +52,7 @@
 <div class="w-full max-w-4xl mb-6">
     <div class="flex flex-col items-center p-6 bg-white rounded-xl shadow-md space-y-4" id="user_info_panel">
         <div class="text-center">
+            <img src={profileImageUrl} alt="Profile" class="w-32 h-32 rounded-full mx-auto mb-4"/>
             <p class="text-2xl font-semibold text-gray-900">@{username}</p>
             <p class="text-sm text-gray-500">Your uuid (identifier): <code>{uuid}</code></p>
         </div>
@@ -51,6 +87,12 @@
                 class="px-4 py-2 bg-indigo-500 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-75"
                 on:click|preventDefault={() => moveToAnotherPage("/user/assetTracking")}>
                 Asset tracking
+            </button>
+            <!-- Set Profile Image -->
+            <button
+                class="px-4 py-2 bg-purple-500 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-opacity-75"
+                on:click={profileImageSetter}>
+                Set Profile Image
             </button>
         </div>
     </div>

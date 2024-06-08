@@ -1,7 +1,8 @@
 # api/user/credentials.py
 # API routers for user login and registration (credentials)
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from schemas import LoginSchema, UserRegistrationSchema
 from typing import Dict, Union
@@ -9,6 +10,7 @@ import datetime
 import jwt
 import os
 import uuid
+from pathlib import Path
 
 # Note that those packages are located in the parent directory
 import sys
@@ -16,6 +18,7 @@ sys.path.append("..")
 from models import User, Balance
 from api.user.password import password_hash, password_verify
 from database_session import get_sqlite3_db
+from .authentication import get_current_user
 
 # Create a JWT token (access token) for the user who logged in
 def create_access_token(data: Dict, secret_key:str = None, expires_delta: datetime.timedelta = None) -> str:
@@ -114,3 +117,42 @@ def register(user: UserRegistrationSchema, db: Session = Depends(get_sqlite3_db)
             "username": new_user.username, 
             "email": new_user.email, 
             "created_at": new_user.created_at}
+
+# Profile image upload router
+@router.post("/api/account/upload-profile-image/")
+async def upload_profile_image(file: UploadFile = File(...), db: Session = Depends(get_sqlite3_db)) -> Dict:
+    user_id = 1  # Replace with the actual logic to get the user ID (e.g., from JWT token)
+
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    # Create the directory if it doesn't exist
+    upload_dir = Path("data/uploads/profile_images")
+    upload_dir.mkdir(parents=True, exist_ok=True)
+
+    # Define the file path
+    file_path = upload_dir / f"{user.uuid}.png"
+
+    # Save the file
+    with open(file_path, "wb") as buffer:
+        buffer.write(await file.read())
+
+    return {"filename": str(file_path)}
+
+# Profile image retrieval router
+@router.get("/api/account/get-profile-image/")
+async def get_profile_image(current_user: User = Depends(get_current_user), db: Session = Depends(get_sqlite3_db)):
+    user = current_user
+
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    # Define the file path
+    user_info = db.query(User).filter(User.username == user["username"]).first()
+    file_path = Path(f"data/uploads/profile_images/{user_info.uuid}.png")
+
+    if not file_path.exists():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Profile image not found")
+
+    return FileResponse(path=file_path, media_type='image/png')

@@ -30,6 +30,10 @@
             asyncComponent: () => import('./routes/register.svelte'),
             conditions: [() => !$auth]  // Only show if not logged in
         }),
+        '/leaderboard': wrap({
+            asyncComponent: () => import('./routes/leaderboard.svelte'),
+            // No conditions, always show
+        }),
         '/exchange/main': wrap({
             asyncComponent: () => import('./routes/exchange/main.svelte'),
             conditions: [() => $auth]  // Ensure authenticated

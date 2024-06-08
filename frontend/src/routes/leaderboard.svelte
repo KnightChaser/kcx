@@ -1,5 +1,5 @@
 <!-- /src/leaderboard.svelte -->
-<script>10000
+ <script>
     import { onMount, onDestroy } from "svelte";
     import axios from "axios";
     import Swal from 'sweetalert2';
@@ -66,6 +66,11 @@
     onDestroy(() => {
         clearInterval(fetchInterval);
     });
+
+    // Get the maximum asset value for relative bar length calculation
+    function getMaxAssetValue() {
+        return Math.max(...leaderboard.map(user => user.total_asset_value));
+    }
 </script>
 
 <div class="w-full max-w-6xl mx-auto p-6 bg-white rounded-xl shadow-md space-y-6" id="leaderboard">
@@ -102,7 +107,12 @@
                             {/if}
                         </td>
                         <td class="py-2 px-6 whitespace-nowrap text-center">{username}</td>
-                        <td class="py-2 px-6 whitespace-nowrap text-right">{new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(total_asset_value)}</td>
+                        <td class="py-2 px-6 whitespace-nowrap text-right relative">
+                            <span>{new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(total_asset_value)}</span>
+                            <div class="absolute inset-0 flex items-end">
+                                <div class="h-1" style="width: {total_asset_value / getMaxAssetValue() * 100}%; background: linear-gradient(to right, purple, red);"></div>
+                            </div>
+                        </td>
                     </tr>
                 {/each}
             </tbody>

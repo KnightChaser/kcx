@@ -90,6 +90,11 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+# Hello world endpoint
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+
 allowed_origins: list = [
     # For localhost development
     "http://localhost:4173",

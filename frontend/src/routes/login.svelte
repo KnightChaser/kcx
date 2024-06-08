@@ -41,7 +41,7 @@
                 });
             }
         } catch (error) {
-            if (error.response && error.response.status === 401) {
+            if (error.response && (error.response.status === 401 || error.response.status === 404)) {
                 errorMessage = "Invalid username or password";
             } else {
                 errorMessage = "Failed to login: " + error.message;

@@ -1,5 +1,5 @@
 <!-- /src/leaderboard.svelte -->
- <script>
+<script>
     import { onMount, onDestroy } from "svelte";
     import axios from "axios";
     import Swal from 'sweetalert2';
@@ -10,6 +10,7 @@
     let leaderboard = [];
     // Cache for profile images
     let imageCache = {};
+    let hoverInfo = null;
 
     // Function to fetch leaderboard data
     async function fetchLeaderboard() {
@@ -71,6 +72,39 @@
     function getMaxAssetValue() {
         return Math.max(...leaderboard.map(user => user.total_asset_value));
     }
+
+    function handleMouseEnter(index) {
+        hoverInfo = { index, user: leaderboard[index] };
+    }
+
+    function handleMouseLeave() {
+        hoverInfo = null;
+    }
+
+    function formatCurrency(value) {
+        return new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(value);
+    }
+
+    // Function to get the popup info for each user according to their rank
+    function getPopupInfo(index) {
+        if (index === 0) {
+            // Top user
+            const nextUser = leaderboard[index + 1];
+            return `${formatCurrency(Math.abs(nextUser.total_asset_value - leaderboard[index].total_asset_value))} more than <code><strong>@${nextUser.username}</strong></code><br>
+                    (Top user. No one is richer than <code><strong>@${leaderboard[index].username}</strong></code>!)`;
+        } else if (index === leaderboard.length - 1) {
+            // Bottom user
+            const prevUser = leaderboard[index - 1];
+            return `${formatCurrency(prevUser.total_asset_value - leaderboard[index].total_asset_value)} less than <code><strong>@${prevUser.username}</strong></code><br>
+                    (Bottom user. No one is poorer than <code><strong>@${leaderboard[index].username}</strong></code>!)`;
+        } else {
+            // Middle user
+            const prevUser = leaderboard[index - 1];
+            const nextUser = leaderboard[index + 1];
+            return `${formatCurrency(prevUser.total_asset_value - leaderboard[index].total_asset_value)} less than <code><strong>@${prevUser.username}</strong></code>(+1 rank)<br>
+                    ${formatCurrency(leaderboard[index].total_asset_value - nextUser.total_asset_value)} more than <code><strong>@${nextUser.username}</strong></code>(-1 rank)`;
+        }
+    }
 </script>
 
 <div class="w-full max-w-6xl mx-auto p-6 bg-white rounded-xl shadow-md space-y-6" id="leaderboard">
@@ -95,7 +129,9 @@
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
                 {#each leaderboard as { username, total_asset_value, profileImageUrl }, index}
-                    <tr class="hover:bg-gray-100">
+                    <tr class="hover:bg-gray-100 relative"
+                        on:mouseenter={() => handleMouseEnter(index)}
+                        on:mouseleave={handleMouseLeave}>
                         <td class="py-2 px-6 whitespace-nowrap text-center">{index + 1}</td>
                         <td class="py-2 px-6 whitespace-nowrap text-center">
                             {#if profileImageUrl}
@@ -108,11 +144,16 @@
                         </td>
                         <td class="py-2 px-6 whitespace-nowrap text-center">{username}</td>
                         <td class="py-2 px-6 whitespace-nowrap text-right relative">
-                            <span>{new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(total_asset_value)}</span>
+                            <span>{formatCurrency(total_asset_value)}</span>
                             <div class="absolute inset-0 flex items-end">
-                                <div class="h-1" style="width: {total_asset_value / getMaxAssetValue() * 100}%; background: linear-gradient(to right, purple, red);"></div>
+                                <div class="h-1" style="width: {total_asset_value / getMaxAssetValue() * 100}%; background: linear-gradient(to right, purple, pink);"></div>
                             </div>
                         </td>
+                        {#if hoverInfo && hoverInfo.index === index}
+                            <div class="absolute bg-white border border-gray-300 shadow-lg p-2 rounded text-sm z-10" style="left: 50%; transform: translateX(-50%); top: -50%;">
+                                {@html getPopupInfo(index)}
+                            </div>
+                        {/if}
                     </tr>
                 {/each}
             </tbody>
@@ -142,5 +183,9 @@
 
     .table-auto th, .table-auto td {
         min-width: 150px;
+    }
+
+    .relative {
+        position: relative;
     }
 </style>

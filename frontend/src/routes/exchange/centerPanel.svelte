@@ -47,7 +47,7 @@
     // Calculate the size and total value based on the mode
     const calculateValues = () => {
         if (mode === 'buy') {
-            //  If the user is buying, the size is calculated based on the total value
+            // If the user is buying, the size is calculated based on the total value
             totalValue = Math.floor(sliderValue * krwBalance);
             size = totalValue / currentPrice;
         } else {
@@ -60,6 +60,14 @@
     // Switch the mode between 'buy' and 'sell'
     const switchMode = (newMode) => {
         mode = newMode;
+        resetValues();
+    };
+
+    // Reset the values
+    const resetValues = () => {
+        sliderValue = 0;
+        size = 0;
+        totalValue = 0;
         calculateValues();
     };
 
@@ -69,6 +77,7 @@
         parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         return parts.join(".");
     };
+
     // Load the TradingView widget with the selected market
     function loadTradingViewWidget(market) {
         const script = document.createElement('script');
@@ -108,6 +117,7 @@
         if (selectedMarket && selectedMarket.market !== previousMarket) {
             loadTradingViewWidget(selectedMarket);
             previousMarket = selectedMarket.market;
+            resetValues();
         }
     });
 

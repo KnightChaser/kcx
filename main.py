@@ -3,6 +3,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+# API endpoints
 from api.user.credentials import router as user_router
 from api.user.balance import router as balance_router
 from api.user.existence_check import check_existence
@@ -11,7 +12,9 @@ from api.statistics.statistics import router as service_statistics_router
 from api.exchange.market import router as market_router
 from api.exchange.trade import router as trade_router
 
+# Tasks running in the background (multi-threading)
 from tasks.fetch_and_store_market_data import start_fetch_and_store_market_data
+from tasks.ranking_user_leaderboard import start_rank_user_leaderboard
 
 from contextlib import asynccontextmanager
 from rich.console import Console
@@ -39,8 +42,15 @@ async def lifespan(app: FastAPI):
     redis_client = redis.Redis(host=redis_host, port=redis_port, db=redis_database)
     console.log(f"Setting up the Redis database at {redis_host}:{redis_port}/{redis_database}")
 
+    # Start the market data fetching and storing task (multi-threading)
     update_interval_in_seconds = int(os.getenv("REDIS_UDPATE_INTERVAL_IN_SECONDS", 1))
     start_fetch_and_store_market_data(redis_client=redis_client, update_interval_in_seconds=update_interval_in_seconds)
+    console.log(f"Started fetching and storing the market data in the Redis database every {update_interval_in_seconds} seconds")
+
+    # Start the user leaderboard ranking task (multi-threading)
+    update_interval_in_seconds = int(os.getenv("USER_RANKING_UPDATE_INTERVAL_IN_SECONDS", 10))
+    start_rank_user_leaderboard(update_interval_in_seconds=update_interval_in_seconds)
+    console.log(f"Started ranking the user leaderboard every {update_interval_in_seconds} seconds")
 
     # Create all tables in the database
     from database import Base, engine

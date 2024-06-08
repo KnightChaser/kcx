@@ -4,10 +4,11 @@
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
-from database_session import get_sqlite3_db
+from database_session import get_sqlite3_db, get_redis_db
 from models import Statistics
+import json
 
-router: APIRouter = APIRouter()
+router = APIRouter()
 
 # Get the statistics data of the total amount of cryptocurrency traded
 @router.get("/api/statistics/total-transaction-amount")
@@ -21,5 +22,19 @@ async def get_total_transactions(db: Session = Depends(get_sqlite3_db)) -> JSONR
             "KRW": statistics.total_transaction_amount
         }
         return JSONResponse(content=total_transactions, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
+
+# Get the statistics data of the user leaderboard
+@router.get("/api/statistics/user-leaderboard")
+async def get_user_leaderboard(redis_client = Depends(get_redis_db)) -> JSONResponse:
+    try:
+        # Fetch the leaderboard from Redis
+        leaderboard_data = redis_client.get("user_leaderboard")
+        if leaderboard_data is None:
+            return JSONResponse(content={}, status_code=200)
+
+        leaderboard = json.loads(leaderboard_data)
+        return JSONResponse(content=leaderboard, status_code=200)
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)

@@ -1,5 +1,5 @@
 <!-- /src/leaderboard.svelte -->
-<script>
+<script>10000
     import { onMount, onDestroy } from "svelte";
     import axios from "axios";
     import Swal from 'sweetalert2';
@@ -8,12 +8,43 @@
 
     // Variable for leaderboard data
     let leaderboard = [];
+    // Cache for profile images
+    let imageCache = {};
 
     // Function to fetch leaderboard data
     async function fetchLeaderboard() {
         try {
             const response = await axios.get(`${BACKEND_API_URL}/statistics/user-leaderboard`);
-            leaderboard = response.data;
+            const data = response.data;
+            leaderboard = await Promise.all(Object.entries(data).map(async ([username, total_asset_value]) => {
+                let profileImageUrl = '';
+
+                // Check if the image is already cached
+                if (imageCache[username]) {
+                    profileImageUrl = imageCache[username];
+                } else {
+                    try {
+                        const imageResponse = await axios.post(`${BACKEND_API_URL}/account/get-profile-image/`, new URLSearchParams({
+                            username: username
+                        }), {
+                            responseType: 'arraybuffer' // Ensure the response is in binary format
+                        });
+
+                        // Convert the image data to base64
+                        const base64Image = btoa(
+                            new Uint8Array(imageResponse.data).reduce((data, byte) => data + String.fromCharCode(byte), '')
+                        );
+                        profileImageUrl = `data:image/png;base64,${base64Image}`;
+                        // Cache the image
+                        imageCache[username] = profileImageUrl;
+                    } catch (error) {
+                        console.error(`Error fetching profile image for ${username}:`, error);
+                        // Use default placeholder if profile image is not found
+                        profileImageUrl = '';
+                    }
+                }
+                return { username, total_asset_value, profileImageUrl };
+            }));
         } catch (error) {
             console.error("Error fetching leaderboard data:", error);
             Swal.fire({
@@ -52,14 +83,24 @@
             <thead class="bg-gray-50">
                 <tr>
                     <th class="py-3 px-6 text-xs text-gray-500 uppercase tracking-wider text-center font-bold">Rank</th>
+                    <th class="py-3 px-6 text-xs text-gray-500 uppercase tracking-wider text-center font-bold">Profile</th>
                     <th class="py-3 px-6 text-xs text-gray-500 uppercase tracking-wider text-center font-bold">Username</th>
                     <th class="py-3 px-6 text-xs text-gray-500 uppercase tracking-wider text-center font-bold">Total Asset Value (KRW)</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-                {#each Object.entries(leaderboard) as [username, total_asset_value], index}
+                {#each leaderboard as { username, total_asset_value, profileImageUrl }, index}
                     <tr class="hover:bg-gray-100">
                         <td class="py-2 px-6 whitespace-nowrap text-center">{index + 1}</td>
+                        <td class="py-2 px-6 whitespace-nowrap text-center">
+                            {#if profileImageUrl}
+                                <img src={profileImageUrl} alt="Profile" class="w-10 h-10 rounded-full mx-auto"/>
+                            {:else}
+                                <div class="w-10 h-10 rounded-full mx-auto bg-gray-300 flex items-center justify-center text-xl text-gray-600">
+                                    ?
+                                </div>
+                            {/if}
+                        </td>
                         <td class="py-2 px-6 whitespace-nowrap text-center">{username}</td>
                         <td class="py-2 px-6 whitespace-nowrap text-right">{new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(total_asset_value)}</td>
                     </tr>

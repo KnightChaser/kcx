@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from models import DepositWithdrawHistory, TradeHistory
 from schemas import BalanceSchema, BalanceDepositWithdrawSchema
+import os
 from .authentication import get_current_user
 from .credentials import get_user_id_by_username
 
@@ -35,6 +36,10 @@ def get_balance(db:Session = Depends(get_sqlite3_db), current_user:User = Depend
 # Deposit money(KRW; fiat currency) to the user's account
 @router.post("/api/account/deposit/KRW", response_model=BalanceDepositWithdrawSchema)
 def deposit_KRW(deposit_balance: BalanceDepositWithdrawSchema, db: Session = Depends(get_sqlite3_db), current_user: User = Depends(get_current_user)) -> BalanceDepositWithdrawSchema:
+    # Check if the deposit feature is allowed in the environment
+    if os.getenv("ALLOW_ARBITRARY_BALANCE_DEPOSIT", "false").lower() != "true":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Deposit is not allowed in the current environment. Contact the administrator.")
+    
     # Deposit can't be a negative number
     if deposit_balance.KRW <= 0:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Deposit amount must be greater than zero")
@@ -64,6 +69,10 @@ def deposit_KRW(deposit_balance: BalanceDepositWithdrawSchema, db: Session = Dep
 # Withdraw money(KRW; fiat currency) from the user's account
 @router.post("/api/account/withdraw/KRW", response_model=BalanceDepositWithdrawSchema)
 def withdraw_KRW(withdraw_balance: BalanceDepositWithdrawSchema, db: Session = Depends(get_sqlite3_db), current_user: User = Depends(get_current_user)) -> BalanceDepositWithdrawSchema:
+    # Check if the withdraw feature is allowed in the environment
+    if os.getenv("ALLOW_ARBITRARY_BALANCE_WITHDRAW", "false").lower() != "true":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Withdraw is not allowed in the current environment. Contact the administrator.")
+    
     # Withdraw can't be a negative number
     if withdraw_balance.KRW <= 0:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Withdraw amount must be greater than zero")

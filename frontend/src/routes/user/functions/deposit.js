@@ -41,6 +41,14 @@ export async function depositKRW() {
 
                 return response.data;
             } catch (error) {
+                // Deposit was forbidden (403) due to the administrator's policy.
+                if (error.response && error.response.status === 403) {
+                    Swal.showValidationMessage(
+                        "Deposit is forbidden due to the administrator's policy. Contact the administrator for more information."
+                    );
+                    return;
+                }
+
                 // Show an error message if the response is not OK
                 Swal.showValidationMessage(
                     `Request failed: ${error.response ? error.response.data : error.message}`

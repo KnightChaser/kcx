@@ -102,11 +102,11 @@ def register(user: UserRegistrationSchema, db: Session = Depends(get_sqlite3_db)
     db.commit()
     db.refresh(new_user)
 
-    # Registration successful, charge initial fund 1,000,000 KRW to the user's account
+    # Registration successful, charge initial fund as  
     # Note that the initial fund is only for demonstration purposes
     new_balance = Balance(
         user_id=new_user.id,
-        KRW=1000000
+        KRW=int(os.getenv("STARTING_BALANCE_IN_KRW", 1000000))
     )
     db.add(new_balance)
     db.commit()

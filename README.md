@@ -1,19 +1,62 @@
 # KCX
 > **K**nightchaser's **C**ryptocurrency e**X**change
 
+## TECH STACK
+- **Service buildup**
+
 ![sveltekit_lgo](https://img.shields.io/badge/SvelteKit-FF3E00?style=for-the-badge&logo=Svelte&logoColor=white)
 ![vite_logo](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)
 ![nodejs_logo](https://img.shields.io/badge/Node%20js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
 ![fastapi_logo](https://img.shields.io/badge/fastapi-109989?style=for-the-badge&logo=FASTAPI&logoColor=white)
 ![sqlite_logo](https://img.shields.io/badge/Sqlite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
 ![redis_logo](https://img.shields.io/badge/redis-%23DD0031.svg?&style=for-the-badge&logo=redis&logoColor=white)
-![docker-logo](https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white)
 ![nginx_logo](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)
+
+- **Deployment**
+
+![docker-logo](https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white)
 ![aws_logo](https://img.shields.io/badge/Amazon_AWS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)
 
 ## A Free-From-Risk cryptocurrency exchange simulation web application
 
 You can try KCX at **[https://kcx.knightchaser.com/](https://kcx.knightchaser.com/)**, which is hosted via AWS Lightsail by the repository owner. Note that the specifications, service status, and other things might be changed depending on the development contexts and situations. (Try only for fun! :D)
+
+## Service environmental variables
+Currently, there are environment variables to set up the services as you need. Read the next chapter(`Deployment`) for complete contextual information.
+```env
+SQLALCHEMY_DB_SQLITE3_PATH="sqlite:///kcx.db"
+
+TEST_ACCOUNT_ID="test"
+TEST_ACCOUNT_PW="test"
+TEST_ACCOUNT_EMAIL="test@kcx.org"
+COMMON_STARTING_BALANCE_IN_KRW=20000000000 # 20 billion KRW
+
+# An example SECRET KEY for JWT. Change this to a random in production!
+JWT_SECRET_KEY="KCXU$3R$3CR3T4JWT_"
+JWT_TOKEN_EXPIRES_MINUTES=360 # 6 hours
+
+# A custom API server built with Redis
+REDIS_PORT=6379
+REDIS_DB=0
+REDIS_UDPATE_INTERVAL_IN_SECONDS=1
+USER_RANKING_UPDATE_INTERVAL_IN_SECONDS=10
+
+# Service configuration
+# - Money balance (Disable(false) this if you want to use a fixed starting balance for all users)
+ALLOW_ARBITRARY_BALANCE_DEPOSIT=false
+ALLOW_ARBITRARY_BALANCE_WITHDRAW=false
+```
+- Permanent data for this service will be stored in SQLite3. Configure `SQLALCHEMY_DB_SQLITE3_PATH` for the specified path.
+- As a default, there are default account settings.
+  - The service will create a default account for testing when the service starts. (Will not if it's already created)
+  - Configure `TEST_ACCOUNT_ID`(ID = username), `TEST_ACCOUNT_PW`(password), and `TEST_ACCOUNT_EMAIL`(email) for the test account.
+  - `COMMON_STARTING_BALANCE_IN_KRW` defines how much fund will be initially granted to the new user.
+- This server uses JWT for user authentication. Configure `JWT_SECRET_KEY` for JWT server key(change to another random value or your own) and `JWT_TOKEN_EXPIRES_MINUTES` for JWT expiary period.
+- For the price information, this service uses the market data provided from UpBIT. Of course this also mimics the cryptocurrency exchange, there are a lot of requests about the crypto market data(Generally 3 to 5 requests per second per connected user) To reduce the direct API request to UpBIT, this use REDIS database as a cache. The server caches the market data every second and multiple connected users obtain the data from this REDIS cache.
+  - `REDIS_UPDATE_INTERVAL_IN_SECONDS` means which second this service refreshes the market data from UpBIT to the REDIS cache periodically. Basically, you can safely request up to 5 requests per second to UpBIT according to the current policy.
+  - `USER_RANKING_UPDATE_INTERVAL_IN_SECONDS` means which second this service calculate the users' ranking data according to the calculated estimated total asset value periodically (for leaderboard). Note that this ranking calculation relatively takes a lot of computational loads(iterating all users and calculating all types of assets for estimation), so don't make it too short.
+- `ALLOW_ARBITRARY_BALANCE_*` configures whether the user controls their virtual balances on their own. If these are set true, then they can unlimitedly deposit(increase) and withdraw(decrease) the wallet, that may impact on the leaderboard. If you run this service for competitions or some rules, set it to false so no one except for the administrator can control the user's balances. (By accessing the SQLite3 database.)
 
 ## Deployment
 - Clone the repository on your server/environments

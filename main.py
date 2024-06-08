@@ -31,6 +31,16 @@ async def lifespan(app: FastAPI):
     # Load environment variables. So, we can use them in the application-wide
     load_dotenv()
 
+    # Register service environment variables
+    ALLOW_ARBITRARY_BALANCE_DEPOSIT = os.getenv("ALLOW_ARBITRARY_BALANCE_DEPOSIT", "false").lower() == "true"           # Can user deposit any amount of money?
+    console.log(f"Allow arbitrary balance deposit: {ALLOW_ARBITRARY_BALANCE_DEPOSIT}")
+
+    ALLOW_ARBITRARY_BALANCE_WITHDRAW = os.getenv("ALLOW_ARBITRARY_BALANCE_WITHDRAW", "false").lower() == "true"         # Can user withdraw any amount of money?
+    console.log(f"Allow arbitrary balance withdraw: {ALLOW_ARBITRARY_BALANCE_WITHDRAW}")
+
+    COMMON_STARTING_BALANCE_IN_KRW = int(os.getenv("COMMON_STARTING_BALANCE_IN_KRW", 1000000))                          # Common starting balance for all users
+    console.log(f"Common starting balance in KRW: {COMMON_STARTING_BALANCE_IN_KRW}")
+
     # Check if the current environment is in Docker
     is_docker = os.getenv("IS_IN_KCX_BACKEND_DOCKER", "false").lower() == "true"
     console.log(f"Running in Docker: {is_docker}")

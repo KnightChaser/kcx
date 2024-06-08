@@ -40,6 +40,14 @@ export async function withdrawKRW() {
 
                 return response.data;
             } catch (error) {
+                // Withdrawal was forbidden (403) due to the administrator's policy.
+                if (error.response && error.response.status === 403) {
+                    Swal.showValidationMessage(
+                        "Withdrawal is forbidden due to the administrator's policy. Contact the administrator for more information."
+                    );
+                    return;
+                }
+                
                 // Throw an error if the response is not OK
                 Swal.showValidationMessage(
                     `Request failed: ${error.response ? error.response.data : error.message}`

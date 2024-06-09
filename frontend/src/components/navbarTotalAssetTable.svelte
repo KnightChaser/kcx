@@ -12,38 +12,42 @@
     let fetchAssetDataAndUpdateIntervalId;
     let navbarTotalAssetTableSetIntervalId;
 
-    // There are possibilities that the total asset value is NaN due to 
-    // the asynchronous nature of the fetchAssetDataAndUpdate function and other unpredictable reasons.
-    // Therefore, we need to handle the case where the total asset value is NaN thoroughly.
+    // Initialize CountUp
+    function initializeCountUp() {
+        navbarTotalAssetTableCountUp = new CountUp(
+            totalAssetValueElement,
+            $totalKRW.KRW,
+            {
+                duration: 0.5,
+                separator: ",",
+                decimal: ".",
+                prefix: "₩",
+                startVal: $totalKRW.KRW,
+                plugin: new Odometer({
+                    duration: 0.5,
+                    lastDigitDelay: 0,
+                }),
+            }
+        );
+        navbarTotalAssetTableCountUp.start();
+    }
+
+    function updateCountUp(newVal) {
+        if (isNaN(newVal)) {
+            console.error("Error: Retrieved value is NaN");
+            fetchDataAndUpdate(); // Retry fetching data in case of NaN (some error happened during fetching data)
+        } else {
+            navbarTotalAssetTableCountUp.update(newVal);
+        }
+    }
+
     onMount(() => {
         try {
-            navbarTotalAssetTableCountUp = new CountUp(
-                totalAssetValueElement,
-                $totalKRW.KRW,
-                {
-                    duration: 0.5,
-                    separator: ",",
-                    decimal: ".",
-                    prefix: "₩",
-                    startVal: $totalKRW.KRW,
-                    plugin: new Odometer({
-                        duration: 0.5,
-                        lastDigitDelay: 0,
-                    }),
-                }
-            );
-            navbarTotalAssetTableCountUp.start();
+            initializeCountUp();
 
             // Subscribe to store changes to update countup
             totalKRW.subscribe(($totalKRW) => {
-                try {
-                    if (isNaN($totalKRW.KRW)) {
-                        throw new Error("Retrieved value is NaN");
-                    }
-                    navbarTotalAssetTableCountUp.update($totalKRW.KRW);
-                } catch (error) {
-                    console.error("Error updating total asset value:", error);
-                }
+                updateCountUp($totalKRW.KRW);
             });
 
             // Fetch data every 1 second
@@ -58,22 +62,13 @@
 
             // Fetch data every 1 second
             navbarTotalAssetTableSetIntervalId = setInterval(() => {
-                try {
-                    if (isNaN($totalKRW.KRW)) {
-                        throw new Error("Retrieved value is NaN");
-                    }
-                    // Prevent the total asset value from being NaN
-                    navbarTotalAssetTableCountUp.update($totalKRW.KRW);
-                } catch (error) {
-                    // If error occurs, leave the log and continue refreshing
-                    console.error("Error updating total asset value:", error);
-                }
+                updateCountUp($totalKRW.KRW);
             }, 500);
         } catch (error) {
             console.error("Error initializing CountUp:", error);
         }
     });
-    
+
     onDestroy(() => {
         try {
             navbarTotalAssetTableCountUp.reset();

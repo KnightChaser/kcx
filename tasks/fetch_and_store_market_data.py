@@ -1,8 +1,6 @@
 # tasks/fetch_and_store_market_data.py
 # Fetch the crypto market data from UpBIT API and store it in the Redis database to resolve the API quota issue.
 
-# tasks/fetch_and_store_market_data.py
-
 import requests
 import json
 import threading

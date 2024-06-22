@@ -14,7 +14,7 @@ load_dotenv()
 SQLALCHEMY_DATABASE_FILENAME = os.getenv("SQLALCHEMY_DATABASE_FILENAME", "kcx.db")
 
 # Use absolute path for Docker environment
-if os.getenv("IS_IN_KCX_BACKEND_DOCKER") == "TRUE":
+if os.getenv("IS_IN_KCX_BACKEND_DOCKER", "false").lower() == "TRUE":
     SQLALCHEMY_DATABASE_URL = f"sqlite:////app/data/database/{SQLALCHEMY_DATABASE_FILENAME}"
 else:
     SQLALCHEMY_DATABASE_URL = f"sqlite:///../data/database/{SQLALCHEMY_DATABASE_FILENAME}"

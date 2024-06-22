@@ -2,9 +2,9 @@
 
 FROM node:16
 WORKDIR /app
-COPY frontend/package*.json ./
+COPY ./package*.json ./
 RUN npm install
-COPY frontend .
+COPY . .
 
 # Expose the port the dev server runs on
 EXPOSE 5173

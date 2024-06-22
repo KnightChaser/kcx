@@ -7,8 +7,8 @@ networks:
 services:
   backend:
     build:
-      context: .
-      dockerfile: Dockerfile.backend
+      context: ./backend/
+      dockerfile: Dockerfile
     env_file: 
       - .env
     ports:
@@ -26,15 +26,13 @@ services:
 
   frontend:
     build:
-      context: .
-      dockerfile: Dockerfile.frontend
+      context: ./frontend/
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
       - "5173:5173"
     depends_on:
       - backend
-    environment:
-      VITE_BASE_URL: "http://backend:8000"
     networks:
       - kcx-network
 
@@ -49,8 +47,6 @@ services:
     image: "nouchka/sqlite3"
     volumes:
       - ./database:/data  # Mount the host directory to persist the SQLite files
-    environment:
-      SQLITE_DATABASE: "/data/kcx.db"  # Ensure the database is stored in the mounted volume
     ports:
       - "8080:8080"
     networks:

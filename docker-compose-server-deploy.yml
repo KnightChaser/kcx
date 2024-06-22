@@ -7,8 +7,8 @@ networks:
 services:
   backend:
     build:
-      context: .
-      dockerfile: Dockerfile.backend
+      context: ./backend/
+      dockerfile: Dockerfile
     env_file:
       - .env
     ports:
@@ -23,14 +23,12 @@ services:
 
   frontend:
     build:
-      context: .
-      dockerfile: Dockerfile.frontend
+      context: ./frontend/
+      dockerfile: Dockerfile
     ports:
       - "5173:5173"
     depends_on:
       - backend
-    environment:
-      - VITE_BACKEND_API_URL=https://kcx.knightchaser.com/api
     networks:
       - kcx-network
 
@@ -45,8 +43,6 @@ services:
     image: "nouchka/sqlite3"
     volumes:
       - ./database:/data
-    environment:
-      - SQLITE_DATABASE=/data/kcx.db
     ports:
       - "8080:8080"
     networks:
@@ -65,4 +61,3 @@ services:
       - backend
     networks:
       - kcx-network
-

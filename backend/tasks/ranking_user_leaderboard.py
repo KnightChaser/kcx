@@ -10,7 +10,6 @@
 import threading
 import time
 import json
-from sqlalchemy.orm import Session
 from rich.console import Console
 from typing import List, Dict
 

@@ -8,15 +8,17 @@ from dotenv import load_dotenv
 from rich.console import Console
 import os
 
-# SQLite3 database file will be stored in the ./database directory.
-# If there is no such directory, create one.
-if not os.path.exists("database"):
-    os.makedirs("database")
-
 # Load the database URL from the .env file
 console = Console()
 load_dotenv()
-SQLALCHEMY_DATABASE_URL = os.getenv("SQLALCHEMY_DATABASE_URL", "sqlite:///./database/kcx.db")
+SQLALCHEMY_DATABASE_FILENAME = os.getenv("SQLALCHEMY_DATABASE_FILENAME", "kcx.db")
+
+# Use absolute path for Docker environment
+if os.getenv("IS_IN_KCX_BACKEND_DOCKER") == "TRUE":
+    SQLALCHEMY_DATABASE_URL = f"sqlite:////app/data/database/{SQLALCHEMY_DATABASE_FILENAME}"
+else:
+    SQLALCHEMY_DATABASE_URL = f"sqlite:///../data/database/{SQLALCHEMY_DATABASE_FILENAME}"
+
 console.log(f"Database URL: [bold]{SQLALCHEMY_DATABASE_URL}[/bold]")
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})

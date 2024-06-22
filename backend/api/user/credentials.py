@@ -127,7 +127,7 @@ async def upload_profile_image(current_user: User = Depends(get_current_user), f
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
     # Create the directory if it doesn't exist
-    upload_dir = Path("data/uploads/profile_images")
+    upload_dir = Path(os.path.join(os.path.dirname(__file__), "..", "..", "..", "data", "uploads", "profile_images"))
     upload_dir.mkdir(parents=True, exist_ok=True)
 
     # Define the file path
@@ -147,7 +147,8 @@ async def get_profile_image(username: str = Form(...), db: Session = Depends(get
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
     # Define the file path
-    file_path = Path(f"data/uploads/profile_images/{user.username}.png")
+    image_directory = os.path.join(os.path.dirname(__file__), "..", "..", "..", "data", "uploads", "profile_images")
+    file_path = Path(image_directory) / f"{username}.png"
 
     if not file_path.exists():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Profile image not found")

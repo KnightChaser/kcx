@@ -31,7 +31,7 @@ You can try KCX at **[https://kcx.knightchaser.com/](https://kcx.knightchaser.co
 ## Service environmental variables
 Currently, there are environment variables to set up the services as you need. Read the next chapter(`Deployment`) for complete contextual information.
 ```env
-SQLALCHEMY_DB_SQLITE3_PATH="sqlite:///kcx.db"
+SQLALCHEMY_DB_SQLITE3_FILENAME="kcx.db"
 
 TEST_ACCOUNT_ID="test"
 TEST_ACCOUNT_PW="test"
@@ -53,7 +53,7 @@ USER_RANKING_UPDATE_INTERVAL_IN_SECONDS=10
 ALLOW_ARBITRARY_BALANCE_DEPOSIT=false
 ALLOW_ARBITRARY_BALANCE_WITHDRAW=false
 ```
-- Permanent data for this service will be stored in SQLite3. Configure `SQLALCHEMY_DB_SQLITE3_PATH` for the specified path.
+- Permanent data for this service will be stored in SQLite3. Configure `SQLALCHEMY_DB_SQLITE3_FILENAME` to change the filename (if you want).
 - As a default, there are default account settings.
   - The service will create a default account for testing when the service starts. (Will not if it's already created)
   - Configure `TEST_ACCOUNT_ID`(ID = username), `TEST_ACCOUNT_PW`(password), and `TEST_ACCOUNT_EMAIL`(email) for the test account.
@@ -82,6 +82,18 @@ docker-compose -f docker-compose.yml up -d
 ```sh
 docker-compose -f docker-compose-server-deploy.yml build
 docker-compose -f docker-compose-server-deploy.yml up -d
+```
+## Service data
+- **All service data** will be stored in `<PROJECT_DIR>/data`. Back up this directory periodically in case of deployment!
+- Currently, the data directory will have the following major entires
+```
+data
+ ┣ database
+ ┃ ┗ (SQLite3 database file)
+ ┗ uploads
+ ┃ ┗ profile_images
+ ┃ ┃ ┣ (user profile pictures)
+ ...
 ```
 
 ## Note about TLS/SSL

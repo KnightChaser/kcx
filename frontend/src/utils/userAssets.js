@@ -1,10 +1,11 @@
-// utils/userAssets.js
+// frontend/src/utils/userAssets.js
+
 // Handling user assets (balances and total asset value) in a separate file
 
 import { get } from "svelte/store";
-import { totalKRW } from "../stores/usesrAssets";
-import { push } from "svelte-spa-router";
-import { balances } from "../stores/usesrAssets";
+import { redirect } from "@sveltejs/kit";
+import { balances, totalKRW } from "../stores/usesrAssets.js";
+import { auth } from "../stores/auth.js";
 import Swal from "sweetalert2";
 import axios from "axios";
 
@@ -13,10 +14,11 @@ const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL;
 // Fetch user's asset information from the backend
 export async function getBalance() {
     try {
+        const token = auth.getToken();
         const response = await axios(`${BACKEND_API_URL}/account/balance`, {
             method: "GET",
             headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
+                Authorization: `Bearer ${token}`,
             },
         });
 
@@ -52,7 +54,7 @@ export async function getBalance() {
             icon: "error",
             confirmButtonText: "OK",
         });
-        push("/login");
+        redirect("/login");
     }
 }
 

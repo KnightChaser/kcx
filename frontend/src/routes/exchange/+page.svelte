@@ -89,12 +89,12 @@
     });
 </script>
 
-<main class="h-screen bg-gray-100 font-sans">
+<main class="h-screen bg-gray-100 font-sans overflow-hidden">
     <div class="grid grid-cols-10 h-full">
-        <div class="col-span-3 h-full">
+        <div class="col-span-3 h-full overflow-y-auto">
             <LeftPanel {marketData} {setSelectedMarket} {selectedMarket} on:sort={handleSort} />
         </div>
-        <div class="col-span-7 h-full">
+        <div class="col-span-7 h-full overflow-y-auto">
             <CenterPanel {selectedMarket} {availableBalance} {currentPrice} />
         </div>
     </div>
@@ -103,5 +103,11 @@
 <style>
     main {
         font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+    }
+    .grid {
+        overflow: hidden;
+    }
+    .col-span-3, .col-span-7 {
+        overflow-y: auto;
     }
 </style>

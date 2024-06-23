@@ -1,10 +1,11 @@
-<!-- frontend/src/routes/exchange/leftPanel.svelte  -->
+<!-- frontend/src/routes/exchange/leftPanel.svelte -->
 
 <script>
     import { createEventDispatcher } from 'svelte';
     import { formatCurrency } from '../../utils/formatCurrency';
     export let marketData;
     export let setSelectedMarket;
+    export let selectedMarket;
 
     let filteredMarketData = marketData;
     let searchQuery = '';
@@ -76,7 +77,7 @@
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     {#each filteredMarketData as market}
-                        <tr class="cursor-pointer hover:bg-gray-100" on:click={() => handleMarketSelect(market)}>
+                        <tr class="cursor-pointer hover:bg-gray-100 {market === selectedMarket ? 'bg-gray-200' : ''}" on:click={() => handleMarketSelect(market)}>
                             <td class="px-4 py-2 whitespace-nowrap flex items-center text-center space-x-2">
                                 <img src={`/src/assets/currency_logo/${market.market.replace('KRW-', '').toLowerCase()}_logo.png`} alt="Market Icon" class="h-6 w-6">
                                 <span class="text-gray-900 font-medium">{market.market.replace('KRW-', '')}</span>
@@ -104,5 +105,8 @@
     }
     .overflow-y-auto {
         max-height: calc(124vh);
+    }
+    .bg-gray-200 {
+        background-color: #edf2f7;
     }
 </style>

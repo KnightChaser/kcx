@@ -1,11 +1,14 @@
-import { defineConfig } from 'vite'
-import { svelte } from '@sveltejs/vite-plugin-svelte'
+import { sveltekit } from '@sveltejs/kit/vite';
+import { defineConfig } from 'vite';
+import commonjs from '@rollup/plugin-commonjs';
 
 export default defineConfig({
-  plugins: [svelte()],
-  server: {
-    port: 5173,
-    host: true,
-  },
-})
-
+	plugins: [
+		sveltekit(),
+		commonjs()
+	],
+	server: {
+		port: 5173,
+		host: true
+	}
+});

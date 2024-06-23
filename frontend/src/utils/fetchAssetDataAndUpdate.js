@@ -1,8 +1,8 @@
-// utils/fetchAssetDataAndUpdate.js
+// frontend/src/utils/fetchAssetDataAndUpdate.js
 
+import { redirect } from "@sveltejs/kit"; 
 import Swal from "sweetalert2";
-import { push } from "svelte-spa-router";
-import { getBalance, calculateAssetValueInKRW } from "./userAssets";
+import { getBalance, calculateAssetValueInKRW } from "./userAssets.js";
 
 export async function fetchDataAndUpdate() {
     try {
@@ -15,6 +15,6 @@ export async function fetchDataAndUpdate() {
             icon: "error",
             confirmButtonText: "OK",
         });
-        push("/login");                         // Redirect to login page
+        redirect("/login");
     }
 }

@@ -1,5 +1,6 @@
 // src/stores/auth.js
 import { writable } from 'svelte/store';
+import { browser } from '$app/environment';
 
 // Create a writable store to manage the authentication state
 // The boolean value indicates whether the user is authenticated or not
@@ -10,19 +11,46 @@ function createAuthStore() {
         subscribe,
         login: (token) => {
             // Save the token in the local storage after logging in
-            localStorage.setItem('token', token);
-            set(true);
+            if (browser) {
+                localStorage.setItem('token', token);
+                set(true);
+            }
         },
         logout: () => {
             // Remove the token from the local storage after logging out
-            localStorage.removeItem('token');
-            set(false);
+            if (browser) {
+                localStorage.removeItem('token');
+                set(false);
+            }
         },
         check: () => {
             // Check if the user is authenticated by checking the token in the local storage
-            const token = localStorage.getItem('token');
-            set(!!token);
-        }
+            if (browser) {
+                const token = localStorage.getItem('token');
+                set(!!token);
+            }
+        },
+        getToken: () => {
+            // Get the token from the local storage
+            if (browser) {
+                return localStorage.getItem('token');
+            }
+            return null;
+        },
+        getUsername: () => {
+            // Get the username from the token
+            if (browser) {
+                return localStorage.getItem('username');
+            }
+            return null;
+        },
+        getUuid: () => {
+            // Get the UUID from the token
+            if (browser) {
+                return localStorage.getItem('uuid');
+            }
+            return null;
+        },
     };
 }
 

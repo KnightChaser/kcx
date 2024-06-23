@@ -1,4 +1,4 @@
-// utils/formatAmount.js
+// frontend/src/utils/formatAmount.js
 
 // Helper to format amounts with trailing zeros in gray
 // Might be useful for displaying cryptocurrency amounts

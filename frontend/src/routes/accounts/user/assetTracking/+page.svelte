@@ -3,7 +3,7 @@
     import { onMount, onDestroy } from 'svelte';
     import { formatAmount } from '../../../../utils/formatAmount';
     import { formatCurrency } from '../../../../utils/formatCurrency';
-    import { getAllAvailableMarketsInfo } from '../exchange/functions/getMarketInfo';   
+    import { getAllAvailableMarketsInfo } from '../../../exchange/functions/getMarketInfo';
     import { auth } from '../../../../stores/auth';
     import CryptoAssetTile from './cryptoAssetTile.svelte';
     import TotalAssetTable from '../totalAssetTable.svelte';

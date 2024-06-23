@@ -10,7 +10,7 @@
     import ProfitTable from '../profitTable.svelte';
     import axios from 'axios';
     import Swal from 'sweetalert2';
-    import AssetTable from '../assetTable.svelte';
+    import { Checkbox } from 'flowbite-svelte';
 
     // Get user information
     const username = auth.getUsername();
@@ -23,6 +23,7 @@
     let totalProfit = 0;                // Total profit (sum of all profit amounts)
     let totalProfitRate = 0;            // Total profit rate (weighted average of profit rates)
     let error = null;
+    let showOnlyOwnedAssets = true;     // Toggle to show only owned assets
 
     let intervalId;
 
@@ -72,8 +73,6 @@
             const newTotalProfitRate = (totalInvestment > 0) ? (newTotalProfit / totalInvestment) * 100 : 0;                // Calculate total profit rate
 
             // Update state only after calculations are complete
-            // Ensuring that the state is updated only after all calculations are complete,
-            // so that the UI is updated only once with the latest data (no flickering)
             balanceData = newBalanceData;
             marketData = newMarketData;
             assetTiles = updatedAssetTiles;
@@ -89,7 +88,7 @@
         }
     }
 
-    // It formats the balance data to be displayed in the asset tiles
+    // Format balance data for display
     function formatBalanceData(data) {
         return Object.keys(data).filter(key => !key.includes("_average_unit_price")).map(key => ({
             assetName: key,
@@ -132,11 +131,19 @@
             }
         });
     }
+
+    $: filteredAssetTiles = showOnlyOwnedAssets ? assetTiles.filter(tile => tile.amount > 0) : assetTiles;
 </script>
 
-<div class="w-full max-w-6xl mx-auto p-6 bg-white rounded-xl shadow-md space-y-6">
+<div class="container mx-auto p-6 bg-white rounded-xl shadow-md space-y-6 mt-3">
     <div class="flex justify-between items-center">
         <h2 class="text-2xl font-semibold text-gray-900">Asset Tracking</h2>
+    </div>
+
+    <div class="flex justify-between items-center">
+        <Checkbox bind:checked={showOnlyOwnedAssets}>
+            <span class="ml-2">Show Only Owned Assets</span>
+        </Checkbox>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -153,7 +160,7 @@
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {#each assetTiles as tile}
+        {#each filteredAssetTiles as tile}
             <CryptoAssetTile 
                 assetName={tile.assetName}
                 amount={tile.amount}

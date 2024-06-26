@@ -6,11 +6,12 @@ from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from schemas import LoginSchema, UserRegistrationSchema
 from typing import Dict, Union
+from pathlib import Path
 import datetime
 import jwt
 import os
 import uuid
-from pathlib import Path
+import re
 
 # Note that those packages are located in the parent directory
 import sys
@@ -81,7 +82,11 @@ def register(user: UserRegistrationSchema, db: Session = Depends(get_sqlite3_db)
     # Check if the registration information is arrived without any missing fields
     if not user.username or not user.email or not user.password:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username, email, or password is missing")
-    
+
+    # username should contain only alphanumeric characters and underscores (not allowed other special characters)
+    if not re.match("^[a-zA-Z0-9_]*$", user.username):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username should contain only alphanumeric characters and underscores")
+
     # Check if the user already exists
     if db.query(User).filter(User.username == user.username).first():
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Username already exists")

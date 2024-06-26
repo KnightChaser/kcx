@@ -15,6 +15,7 @@
     let confirmPassword = "";
     let showPassword = false;
     let showConfirmPassword = false;
+    let usernameValid = true;
     const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL;
 
     const toggleShowPassword = () => {
@@ -25,7 +26,24 @@
         showConfirmPassword = !showConfirmPassword;
     };
 
+    const isUsernameValid = (username) => {
+        const regex = /^[a-zA-Z0-9_]+$/;
+        return regex.test(username);
+    };
+
     const submitForm = async () => {
+        if (!isUsernameValid(username)) {
+            usernameValid = false;
+            Swal.fire({
+                title: "Error",
+                text: "Username can only contain alphanumeric characters and underscores.",
+                icon: "error",
+            });
+            return;
+        } else {
+            usernameValid = true;
+        }
+
         if (password !== confirmPassword) {
             Swal.fire({
                 title: "Error",
@@ -93,11 +111,14 @@
             >
             <input
                 type="text"
-                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                class={`mt-1 block w-full px-3 py-2 border ${usernameValid ? 'border-gray-300' : 'border-red-500'} rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
                 id="username"
                 bind:value={username}
                 required
             />
+            {#if !usernameValid}
+                <p class="text-red-500 text-sm mt-1">Username can only contain alphanumeric characters and underscores.</p>
+            {/if}
         </div>
         <div class="mb-4">
             <label for="email" class="block text-sm font-medium text-gray-700"
@@ -213,6 +234,36 @@
         </Accordion>
         <br>
 
+        <Accordion>
+            <AccordionItem>
+                <span slot="header">Policy of peneration(security) testing</span>
+                <div class="border p-4 mt-2 rounded-md">
+                    <p>By clicking the "Register" button, you agree to this condition.</p>
+                    
+                    <p><strong>1. Acceptance of Terms</strong><br />
+                    By clicking the "Register" button and creating an account, you acknowledge that you have read, understood, and agree to be bound by these terms and conditions.</p>
+
+                    <p><strong>2. Not to disclose any security vulnerabilities without permission</strong><br />
+                    If you discover any security vulnerabilities within the platform, you must not disclose them to the public. Instead, please report any security issues directly to the platform administrator immediately so that we can address and resolve them promptly.</p>
+
+                    <p><strong>3. Contributions</strong><br />
+                    By submitting ideas, suggestions, documents, and/or proposals ("Contributions") to the platform, you acknowledge and agree that:</p>
+                    <ul>
+                        <li>We are not under any obligation of confidentiality, express or implied, with respect to the Contributions.</li>
+                        <li>We may have something similar to the Contributions already under consideration or in development.</li>
+                        <li>We will gladly accept any Contributions that you make to improve the platform, but we are not obligated to use or incorporate your Contributions into the platform.</li>
+                        <li>We can attribute your Contributions to you if you want, but you are not entitled to any compensation or reimbursement for them since it's free and open-sourced.</li>
+                        <li>You grant us an irrevocable, non-exclusive, royalty-free, perpetual, worldwide license to use, modify, publish, distribute, and sublicense the Contributions.</li>
+                    </ul>
+
+                    <p><strong>4. Prohibitions</strong><br />
+                    You must not misuse the platform by knowingly introducing viruses, trojans, worms, logic bombs, or other material that is malicious or technologically harmful. You must not attempt to gain unauthorized access to the platform, the server on which the platform is stored, or any server, computer, or database connected to the platform. You must not attack the platform via a denial-of-service attack or a distributed denial-of-service attack. By breaching this provision, you would commit a criminal offense under the Computer Misuse Act 1990. We will report any such breach to the relevant law enforcement authorities and we will cooperate with those authorities by disclosing your identity to them. In the event of such a breach, your right to use the platform will cease immediately.</p>
+
+                    <p><strong>5. Ethical and education purpose of security testing on the platform</strong><br />
+                    The platform is designed for educational purposes and ethical hacking practice (too). You must not use the platform for any illegal or malicious activities. You must not attempt to exploit any vulnerabilities found on the platform for personal gain or to harm others. You must not disrupt the platform's operation or interfere with other users' experience. You must use the platform responsibly and ethically.</p>
+                </AccordionItem>
+        </Accordion>
+        <br>
 
         <!-- register button -->
         <button

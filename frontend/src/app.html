@@ -2,7 +2,6 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<script src="%sveltekit.assets%/scripts/meta.js" defer></script>
 		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		%sveltekit.head%
@@ -10,4 +9,18 @@
 	<body data-sveltekit-preload-data="hover">
 		<div style="display: contents">%sveltekit.body%</div>
 	</body>
+	<script>
+		(function() {
+			if (window.location.href.startsWith('https')) {
+				const metaTag = document.createElement('meta');
+				metaTag.setAttribute('charset', 'UTF-8');
+				metaTag.setAttribute('http-equiv', 'Content-Security-Policy');
+				metaTag.setAttribute('content', 'upgrade-insecure-requests');
+				document.head.appendChild(metaTag);
+
+				console.log('Content-Security-Policy meta tag added because the URL is HTTPS.');
+			}
+			console.log(window.location.href);
+		})();
+	</script>
 </html>

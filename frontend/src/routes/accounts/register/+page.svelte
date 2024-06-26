@@ -6,8 +6,9 @@
     import Swal from "sweetalert2";
     import axios from "axios";
     import { redirect } from "@sveltejs/kit";
-    import { Accordion, AccordionItem } from 'flowbite-svelte';
+    import { Accordion, AccordionItem, Banner } from 'flowbite-svelte';
     import { EyeOutline, EyeSlashOutline } from 'flowbite-svelte-icons';
+    import { BullhornSolid } from 'flowbite-svelte-icons';
 
     let username = "";
     let email = "";
@@ -102,7 +103,18 @@
 </script>
 
 <main class="container mx-auto px-4 mt-8 max-w-lg" id="registration_form">
-    <h2 class="text-3xl font-semibold mb-6 py-2">Register</h2>
+    <!-- A temporary banner asking users to use real email addresses -->
+    <Banner>
+        <div class="flex items-center">
+            <BullhornSolid class="w-6 h-6 text-blue-500" />
+            <p class="ml-2 text-sm text-blue-500">Please <b>use a real email address</b> when registering.
+            We may send important notifications to this email address, including password reset instructions.
+            Using invalid emails may result in account lockout in the future and we will not be able to help you recover your account.</p>
+        </div>
+    </Banner>
+    <br>
+
+    <h2 class="text-3xl font-semibold mb-6 py-2 text-center">Register</h2>
     <form on:submit|preventDefault={submitForm}>
         <div class="mb-4">
             <label

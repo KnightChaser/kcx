@@ -83,6 +83,10 @@ async def buy_crypto(
     db.commit()
     db.refresh(user_balance)
 
+    # Verify the updated balance; if any numerical value is negative, immediately reject the transaction
+    if request.amount < 0 or current_price < 0 or user_balance.KRW < 0 or new_num_assets < 0 or new_avg_price < 0:
+        raise HTTPException(status_code=400, detail="Invalid numeric value for buying cryptocurrency :P")
+
     # Save the trade history
     new_trade_history = TradeHistory(user_id=user_id,
                                      currency=request.market_code,
@@ -149,6 +153,15 @@ async def sell_crypto(
     setattr(user_balance, crypto_amount_attr, getattr(user_balance, crypto_amount_attr, 0) - request.amount)
     db.commit()
     db.refresh(user_balance)
+
+    # Verify the updated balance; if any numerical value is negative, immediately reject the transaction
+    if request.amount < 0 or current_price < 0 or user_balance.KRW < 0 or getattr(user_balance, crypto_amount_attr, 0) < 0:
+        raise HTTPException(status_code=400, detail="Invalid numeric value for selling cryptocurrency :P")
+
+    # If the user has no more assets, reset the average price to 0
+    if getattr(user_balance, crypto_amount_attr, 0) == 0:
+        setattr(user_balance, f"{request.market_code}_average_unit_price", 0)
+        db.commit()
 
     # Save the trade history
     new_trade_history = TradeHistory(user_id=user_id,

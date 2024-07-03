@@ -12,17 +12,17 @@
         },
         {
             place: 2,
-            name: '',
-            description: '',
-            date: '',
-            imageUrl: ''
+            name: 'Hyeonsu Cha',
+            description: 'Exploited the imperfect server deployment configuration, which took over the server account through unmanaged JWT. Thank you for your contribution!',
+            date: '2024-06-27',
+            imageUrl: '/images/hallOfFame/Hyeonsu Cha.jpg'
         },
         {
             place: 3,
-            name: '',
-            description: '',
-            date: '',
-            imageUrl: ''
+            name: '<a href="https://x.com/real_as3617" target="_blank" class="text-blue-500">as3617</a>',
+            description: 'Found a lack of market code(ticker) validity check, which allowed the attacker can insert invalid transaction data to the database. Thank you for your contribution! (Reference: <a href="https://github.com/KnightChaser/kcx/commit/1d22926a35fc98b3a0b9bd13fd08a159f9a49b28" target="_blank" class="text-blue-500">GitHub Commit - Fix the market code(ticker) validity check</a>)',
+            date: '2024-06-27',
+            imageUrl: '/images/hallOfFame/as3617.jpg'
         },
         {
             place: 4,

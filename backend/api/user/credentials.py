@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from schemas import LoginSchema, UserRegistrationSchema
 from typing import Dict, Union
 from pathlib import Path
+import filetype  # Add this line
 import datetime
 import jwt
 import os
@@ -130,7 +131,7 @@ async def upload_profile_image(current_user: User = Depends(get_current_user), f
     user = db.query(User).filter(User.username == username).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-
+    
     # Create the directory if it doesn't exist
     if os.getenv("IS_IN_KCX_BACKEND_DOCKER", "false").lower() == "true":
         upload_dir = Path("/app/data/uploads/profile_images")
@@ -144,6 +145,11 @@ async def upload_profile_image(current_user: User = Depends(get_current_user), f
     # Save the file
     with open(file_path, "wb") as buffer:
         buffer.write(await file.read())
+
+    # Check if the file is a valid image file
+    if not filetype.is_image(file_path):
+        file_path.unlink()      # Delete the file
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid image file. Your file is now deleted. Please upload a valid image file.")
 
     return {"filename": str(file_path)}
 

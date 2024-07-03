@@ -32,7 +32,7 @@
     });
 </script>
 
-<nav class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-lg py-4" id="navbar">
+<nav class="bg-gradient-to-r bg-violet-600 shadow-lg py-4" id="navbar">
     <div class="container mx-auto px-4">
         <div class="flex justify-between items-center">
             <a class="text-white text-3xl font-semibold no-underline"

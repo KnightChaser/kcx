@@ -3,12 +3,12 @@
 # These API routers should be protected by authentication
 
 from typing import Union
-import json
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from schemas import BuyCryptoSchema, SellCryptoSchema
-from api.exchange.market import get_cryptocurrency_ticker
+from api.exchange.market import get_cryptocurrency_ticker, get_cryptocurrency_list
+import json
 
 # Note that those packages are located in the parent directory
 import sys
@@ -37,6 +37,13 @@ async def get_current_crypto_price(market_code: str, redis_client) -> Union[None
 
 router: APIRouter = APIRouter()
 
+# A helper function to check if the crypto ticker is valid
+def is_valid_crypto_ticker(ticker: str) -> bool:
+    cryptocurrency_list = json.loads(get_cryptocurrency_list().body)
+    if ticker in cryptocurrency_list:
+        return True
+    return False
+
 # Buy cryptocurrency (not leverage trading)
 @router.post("/api/exchange/trade/buy")
 async def buy_crypto(
@@ -49,6 +56,10 @@ async def buy_crypto(
         current_price: float = await get_current_crypto_price(f"KRW-{request.market_code}", redis_client)
     except Exception as exception:
         raise HTTPException(status_code=500, detail=f"Failed to get the current price of the cryptocurrency: {str(exception)}")
+
+    # Check if the market code is valid
+    if not is_valid_crypto_ticker(request.market_code):
+        raise HTTPException(status_code=400, detail="Invalid market code")
 
     # Get the user's balance
     username: str = current_user["username"]

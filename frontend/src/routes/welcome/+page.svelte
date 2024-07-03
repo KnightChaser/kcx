@@ -7,23 +7,22 @@
 </script>
 
 <section class="wrapper">
-    <div class={isChecked ? "hero dark" : "hero"}></div>
+    <div class="hero"></div>
     <div class="content">
         <TotalTransactionAmountPanel />
         <h1 class="h1--scalingSize" data-text="An awesome title">
             KCX
         </h1>
-        <h3>
-            Free-From-Risk simulated cryptocurrency trading platform
+        <h3 class="text-2xl font-semibold text-gray-700">
+            NeXT GENERATION SIMULATED CRYPTO EXCHANGE PLATFORM
         </h3>
         <input type="checkbox" id="switch" bind:checked={isChecked} />
     </div>
 </section>
 
 <style>
-    * {
-        font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue",
-            "Helvetica", "Arial", sans-serif;
+    h1, h3 {
+        font-family: "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono", monospace;
     }
 
     /* the background effect */
@@ -163,12 +162,4 @@
         }
     }
 
-    :has(:checked) .hero,
-    :has(:checked) .hero::after {
-        filter: blur(10px) opacity(50%) saturate(200%);
-    }
-
-    :has(:checked) {
-        --stripe-color: #000;
-    }
 </style>

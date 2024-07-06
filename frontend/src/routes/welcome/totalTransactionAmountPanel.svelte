@@ -39,6 +39,7 @@
     onMount(() => {
         // Immediately fetch data once
         fetchTotalTransactionAmount();
+        fetchTotalTransactionCount();
 
         fetchInterval = setInterval(() => {
             fetchTotalTransactionAmount();

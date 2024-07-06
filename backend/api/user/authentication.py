@@ -76,4 +76,5 @@ async def verify_email(request: Request) -> Dict:
         del email_verification_codes[email]  # Remove the verified code
         return {"message": "Email verified successfully."}
     else:
+        del email_verification_codes[email]  # Remove the invalid code and request a new verification code
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid verification code.")

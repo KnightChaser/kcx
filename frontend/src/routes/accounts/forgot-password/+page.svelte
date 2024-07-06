@@ -8,10 +8,16 @@
     let email = '';
     let verificationCode = '';
     let newPassword = '';
+    let confirmPassword = '';
+    let passwordsMatch = false;
     let verificationSent = false;
     let verificationSuccess = false;
     let message = '';
     const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL;
+
+    function checkPasswords() {
+        passwordsMatch = newPassword === confirmPassword;
+    }
 
     async function sendVerificationEmail() {
         try {
@@ -50,7 +56,9 @@
                 });
             }
         } catch (error) {
-            message = error.response?.data?.detail || 'Invalid verification code.';
+            message = error.response?.data?.detail || 'Invalid verification code. Try again.';
+            verificationSent = false; // Reset to allow the user to request verification again
+            verificationSuccess = false;
         }
     }
 
@@ -112,11 +120,24 @@
             <form on:submit|preventDefault={resetPassword}>
                 <div class="mb-4">
                     <label for="newPassword" class="block text-sm font-medium text-gray-700">New Password</label>
-                    <input type="password" bind:value={newPassword} 
+                    <input type="password" bind:value={newPassword} on:input={checkPasswords}
                         class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-shadow"
                         id="newPassword" required>
                 </div>
-                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Reset Password</button>
+                <div class="mb-4">
+                    <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                    <input type="password" bind:value={confirmPassword} on:input={checkPasswords}
+                        class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-shadow"
+                        id="confirmPassword" required>
+                    {#if newPassword && confirmPassword}
+                        {#if passwordsMatch}
+                            <p class="mt-2 text-green-600">Passwords match!</p>
+                        {:else}
+                            <p class="mt-2 text-red-600">Passwords do not match.</p>
+                        {/if}
+                    {/if}
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" disabled={!passwordsMatch}>Reset Password</button>
             </form>
         {/if}
 

@@ -1,6 +1,4 @@
 # api/user/authentication.py
-# API routers that check the user's authentication status (especially for JWT tokens)
-
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel, EmailStr
@@ -23,6 +21,9 @@ class EmailVerificationRequest(BaseModel):
 # Get the current username from the JWT token if it's valid
 # Authorization: `Bearer ${localStorage.getItem("token")}`, where the token is a JWT token
 def get_current_user(token: str = Depends(oauth2_scheme)) -> Union[HTTPException, str]:
+    """
+    Get the current username from the JWT token if it's valid.
+    """
     try:
         payload: Dict = jwt.decode(token, os.getenv("JWT_SECRET_KEY"), algorithms=["HS256"])
         username: str = payload.get("sub")
@@ -48,7 +49,7 @@ async def send_verification_email(request: EmailVerificationRequest) -> Dict:
 
     # Create the SMTP instance
     smtp = SMTP()
-    subject = "Email Verification"
+    subject = "[KCX] Email Verification"
     body = f"Your verification code is: {verification_code}"
 
     try:

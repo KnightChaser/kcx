@@ -83,6 +83,7 @@
 <main class="min-h-screen flex items-center justify-center p-6 bg-gray-100" id="forgot_password_form">
     <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
         <h1 class="text-3xl font-bold mb-4">Password Recovery</h1>
+        <p class="mb-4">Oh, what a lost investor. Enter your email address to receive a verification code. Well, if you didn't receive the email, please check your spam folder.</p>
         {#if !verificationSent}
             <form on:submit|preventDefault={sendVerificationEmail}>
                 <div class="mb-4">

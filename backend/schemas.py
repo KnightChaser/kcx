@@ -4,17 +4,24 @@
 from pydantic import BaseModel, EmailStr, NonNegativeFloat, PositiveFloat
 
 class UserRegistrationSchema(BaseModel):
+    """
+    User registration request schema to this service
+    """
     username: str
     email: EmailStr
     password: str
 
-# User login schema
 class LoginSchema(BaseModel):
+    """
+    User login request schema to this service
+    """
     username: str
     password: str
 
-# User balance schema
 class BalanceSchema(BaseModel):
+    """
+    User balance schema for deposit, withdraw, or check balance
+    """
     KRW: NonNegativeFloat
     AAVE: NonNegativeFloat
     ADA: NonNegativeFloat
@@ -94,21 +101,29 @@ class BalanceSchema(BaseModel):
     XRP_average_unit_price: NonNegativeFloat
     XTZ_average_unit_price: NonNegativeFloat
 
-# User balance schema for deposit and withdraw
 class BalanceDepositWithdrawSchema(BaseModel):
+    """
+    User balance deposit or withdraw schema
+    """
     KRW: PositiveFloat 
 
-# User buy/sell cryptocurrency schema
 class BuyCryptoSchema(BaseModel):
+    """
+    User buy cryptocurrency schema
+    """
     market_code:        str
     amount:             PositiveFloat
 
-# User sell cryptocurrency schema
 class SellCryptoSchema(BaseModel):
+    """
+    User sell cryptocurrency schema
+    """
     market_code:        str
     amount:             PositiveFloat
 
-# User password recovery schema
 class PasswordRecoveryRequestSchema(BaseModel):
+    """
+    User password recovery request schema
+    """
     email: EmailStr
     new_password: str

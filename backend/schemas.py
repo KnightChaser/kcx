@@ -103,6 +103,12 @@ class BuyCryptoSchema(BaseModel):
     market_code:        str
     amount:             NonNegativeFloat
 
+# User sell cryptocurrency schema
 class SellCryptoSchema(BaseModel):
     market_code:        str
     amount:             NonNegativeFloat
+
+# User password recovery schema
+class PasswordRecoveryRequestSchema(BaseModel):
+    email: EmailStr
+    new_password: str

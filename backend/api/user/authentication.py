@@ -1,4 +1,5 @@
 # api/user/authentication.py
+
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel, EmailStr
@@ -11,8 +12,9 @@ from ..email.smtp import SMTP
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-# Global dictionary to store email-verification code pairs
+# Global dictionaries to store email-verification code pairs and verification status
 email_verification_codes = {}
+email_verification_status = {}
 
 # Model for email verification request
 class EmailVerificationRequest(BaseModel):
@@ -46,10 +48,11 @@ async def send_verification_email(request: EmailVerificationRequest) -> Dict:
     email = request.email
     verification_code = token_hex(4)  # Generate a random 8-character hexadecimal number
     email_verification_codes[email] = verification_code  # Store the verification code
+    email_verification_status[email] = False  # Initially set verification status to False
 
     # Create the SMTP instance
     smtp = SMTP()
-    subject = "[KCX] Email Verification"
+    subject = "Email Verification"
     body = f"Your verification code is: {verification_code}"
 
     try:
@@ -69,8 +72,8 @@ async def verify_email(request: Request) -> Dict:
     code = data.get('code')
 
     if email in email_verification_codes and email_verification_codes[email] == code:
+        email_verification_status[email] = True  # Update verification status to True
         del email_verification_codes[email]  # Remove the verified code
-        # Let's assume that the email is verified successfully
         return {"message": "Email verified successfully."}
     else:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid verification code.")

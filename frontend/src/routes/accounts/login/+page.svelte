@@ -101,6 +101,10 @@
                 </div>
             </div>
             <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Login</button>
+            <!-- Find password? link  -->
+            <div class="text-center mt-4">
+                <a href="/accounts/forgot-password" class="text-sm text-indigo-600 hover:text-indigo-700">Forgot password?</a>
+            </div>
         </form>
     </div>
 </main>

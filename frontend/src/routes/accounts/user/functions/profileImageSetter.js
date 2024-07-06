@@ -2,42 +2,70 @@
 
 import Cropper from "cropperjs";
 import Swal from "sweetalert2";
+import { Dropzone } from 'flowbite-svelte';
 import { auth } from "../../../../stores/auth";
 import "cropperjs/dist/cropper.css";
 
 const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL;
 const token = auth.getToken();
 
-// Function to set the profile image of the user. (upload and crop)
+// Function to set the profile image of the user (upload and crop)
 export function profileImageSetter() {
-    // First, get uploaded image file from the user's PC on the modal.
     Swal.fire({
         title: "Select your profile image",
-        input: "file",
-        inputAttributes: {
-            accept: "image/*",
-            "aria-label": "Upload your profile image"
-        },
+        html: `
+            <div id="dropzone" style="border: 2px dashed #ccc; padding: 20px; text-align: center;">
+                <svg aria-hidden="true" class="mb-3 w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
+                <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Supported formats: jpg, jpeg, png, gif</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Maximum size: 5,000 x 5,000 pixels</p>
+                <input type="file" id="fileInput" accept="image/*" style="display: none;" />
+            </div>
+        `,
         showCancelButton: true,
-        preConfirm: (file) => {
-            if (!file) {
-                Swal.showValidationMessage("Please select an image");
-                return false;
-            }
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    resolve(e.target.result);
-                };
-                reader.readAsDataURL(file);
+        didOpen: () => {
+            const dropzone = document.getElementById('dropzone');
+            const fileInput = document.getElementById('fileInput');
+
+            dropzone.addEventListener('click', () => fileInput.click());
+            dropzone.addEventListener('dragover', (event) => {
+                event.preventDefault();
+            });
+            dropzone.addEventListener('drop', (event) => {
+                event.preventDefault();
+                handleFiles(event.dataTransfer.files);
+            });
+            fileInput.addEventListener('change', (event) => {
+                handleFiles(event.target.files);
             });
         }
     }).then((result) => {
-        if (result.isConfirmed) {
-            const imageUrl = result.value;
-            showCropper(imageUrl);
+        if (result.isConfirmed && selectedFile) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                showCropper(e.target.result);
+            };
+            reader.readAsDataURL(selectedFile);
         }
     });
+}
+
+let selectedFile = null;
+
+// Handle files from dropzone or input
+function handleFiles(files) {
+    if (files.length > 0 && validateFile(files[0])) {
+        selectedFile = files[0];
+    } else {
+        Swal.showValidationMessage("Please select a valid image file");
+    }
+}
+
+// Validate file type and size
+function validateFile(file) {
+    const validTypes = ["image/jpg", "image/jpeg", "image/png", "image/gif"];
+    const maxSize = 5000 * 5000; // 5,000 pixels x 5,000 pixels
+    return validTypes.includes(file.type) && file.size <= maxSize;
 }
 
 // Using cropper.js to crop the image as the user wants.
@@ -53,14 +81,12 @@ function showCropper(imageUrl) {
         willOpen: () => {
             const image = document.getElementById("cropperImage");
             const zoomRange = document.getElementById("zoomRange");
-            // @ts-ignore
             const cropper = new Cropper(image, {
                 aspectRatio: 1,
                 viewMode: 1,
                 autoCropArea: 1,
                 ready: function() {
                     zoomRange.addEventListener("input", function() {
-                        // @ts-ignore
                         cropper.zoomTo(parseFloat(this.value));
                     });
                 }
@@ -102,7 +128,7 @@ async function uploadCroppedImage(blob) {
         }).then(() => {
             // Reload the page to see the changes
             location.reload();
-        })
+        });
     } catch (error) {
         Swal.fire({
             icon: "error",

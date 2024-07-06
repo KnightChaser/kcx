@@ -1,7 +1,7 @@
 # schemas.py
 # database schema classes for FastAPI
 
-from pydantic import BaseModel, EmailStr, NonNegativeFloat
+from pydantic import BaseModel, EmailStr, NonNegativeFloat, PositiveFloat
 
 class UserRegistrationSchema(BaseModel):
     username: str
@@ -96,17 +96,17 @@ class BalanceSchema(BaseModel):
 
 # User balance schema for deposit and withdraw
 class BalanceDepositWithdrawSchema(BaseModel):
-    KRW: NonNegativeFloat 
+    KRW: PositiveFloat 
 
 # User buy/sell cryptocurrency schema
 class BuyCryptoSchema(BaseModel):
     market_code:        str
-    amount:             NonNegativeFloat
+    amount:             PositiveFloat
 
 # User sell cryptocurrency schema
 class SellCryptoSchema(BaseModel):
     market_code:        str
-    amount:             NonNegativeFloat
+    amount:             PositiveFloat
 
 # User password recovery schema
 class PasswordRecoveryRequestSchema(BaseModel):

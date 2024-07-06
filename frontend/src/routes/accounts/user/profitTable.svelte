@@ -27,20 +27,11 @@
 
     function updateValues() {
         if (totalProfitKRWTargetElement) {
-            totalProfitKRWTargetElement.innerText = formatCurrency(totalProfit);
+            totalProfitKRWTargetElement.innerText = Math.round(totalProfit).toLocaleString();
         }
         if (totalProfitRateTargetElement) {
             totalProfitRateTargetElement.innerText = totalProfitRate.toFixed(3);
         }
-    }
-
-    // Function to format the number with localization
-    function formatCurrency(value) {
-        return new Intl.NumberFormat('ko-KR', {
-            style: 'currency',
-            currency: 'KRW',
-            minimumFractionDigits: 0
-        }).format(value);
     }
 </script>
 

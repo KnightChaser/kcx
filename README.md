@@ -64,6 +64,16 @@ ALLOW_ARBITRARY_BALANCE_WITHDRAW=false
   - `USER_RANKING_UPDATE_INTERVAL_IN_SECONDS` means which second this service calculate the users' ranking data according to the calculated estimated total asset value periodically (for leaderboard). Note that this ranking calculation relatively takes a lot of computational loads(iterating all users and calculating all types of assets for estimation), so don't make it too short.
 - `ALLOW_ARBITRARY_BALANCE_*` configures whether the user controls their virtual balances on their own. If these are set true, then they can unlimitedly deposit(increase) and withdraw(decrease) the wallet, that may impact on the leaderboard. If you run this service for competitions or some rules, set it to false so no one except for the administrator can control the user's balances. (By accessing the SQLite3 database.)
 
+**Plus**, there is a feature of sending verification emails for changing account email address/password, or recoverying password. Get a possible **SMTP(Simple Mail Transfer Protocol)** account, and create the following environment variable file named **`<PROJECT_DIR>/backend/.secrets.smtp`**, fill the contents like below. If you use **Gmail** for SMTP, the configuration would like below.
+```env
+# backend/.secrets.smtp
+
+SMTP_USERNAME="knightchaser_example"        # Gmail address without "@gmail.com"
+SMTP_PASSWORD="abcd efgh ijkl mnop"         # App password
+SMTP_SERVER="smtp.gmail.com"
+SMTP_PORT=587
+```
+
 ## Deployment
 - Clone the repository on your server/environments
 ```sh

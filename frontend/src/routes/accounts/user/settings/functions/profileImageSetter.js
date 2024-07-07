@@ -1,8 +1,8 @@
-// src/routes/user/functions/profileImageSetter.js
+// src/routes/user/settings/functions/profileImageSetter.js
 
 import Cropper from "cropperjs";
 import Swal from "sweetalert2";
-import { auth } from "../../../../stores/auth";
+import { auth } from "../../../../../stores/auth";
 import "cropperjs/dist/cropper.css";
 
 const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL;

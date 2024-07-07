@@ -51,6 +51,13 @@ function createAuthStore() {
             }
             return null;
         },
+        getEmail: () => {
+            // Get the email from the token
+            if (browser) {
+                return localStorage.getItem('email');
+            }
+            return null;
+        }
     };
 }
 

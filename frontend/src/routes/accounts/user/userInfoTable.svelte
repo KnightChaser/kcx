@@ -7,7 +7,7 @@
 
     import { depositKRW } from "./functions/deposit";
     import { withdrawKRW } from "./functions/withdraw";
-    import { profileImageSetter } from "./functions/profileImageSetter";
+    import { profileImageSetter } from "./settings/functions/profileImageSetter";
     import { browser } from "$app/environment";
     import { auth } from "../../../stores/auth";
     
@@ -90,12 +90,18 @@
                 on:click|preventDefault={() => moveToAnotherPage("/accounts/user/assetTracking")}>
                 Asset tracking
             </button>
-            <!-- Set Profile Image -->
+            <!-- Settings -->
             <button
+                class="px-4 py-2 bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75"
+                on:click|preventDefault={() => moveToAnotherPage("/accounts/user/settings")}>
+                Settings
+            </button>
+            <!-- Set Profile Image -->
+            <!-- <button
                 class="px-4 py-2 bg-purple-500 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-opacity-75"
                 on:click={profileImageSetter}>
                 Set Profile Image
-            </button>
+            </button> -->
         </div>
     </div>
 </div>

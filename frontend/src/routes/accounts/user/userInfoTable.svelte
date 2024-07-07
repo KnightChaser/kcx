@@ -96,12 +96,6 @@
                 on:click|preventDefault={() => moveToAnotherPage("/accounts/user/settings")}>
                 Settings
             </button>
-            <!-- Set Profile Image -->
-            <!-- <button
-                class="px-4 py-2 bg-purple-500 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-opacity-75"
-                on:click={profileImageSetter}>
-                Set Profile Image
-            </button> -->
         </div>
     </div>
 </div>

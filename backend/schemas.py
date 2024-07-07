@@ -127,3 +127,10 @@ class PasswordRecoveryRequestSchema(BaseModel):
     """
     email: EmailStr
     new_password: str
+
+class EmailChangeRequestSchema(BaseModel):
+    """
+    User email change request schema
+    """
+    old_email: EmailStr
+    new_email: EmailStr

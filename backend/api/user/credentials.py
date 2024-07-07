@@ -4,7 +4,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile, Form
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
-from schemas import LoginSchema, UserRegistrationSchema, PasswordRecoveryRequestSchema
+from schemas import LoginSchema, UserRegistrationSchema, PasswordRecoveryRequestSchema, EmailChangeRequestSchema
 from typing import Dict, Union
 from pathlib import Path
 import filetype
@@ -174,7 +174,7 @@ async def get_profile_image(username: str = Form(...), db: Session = Depends(get
     return FileResponse(path=file_path, media_type='image/png')
 
 # Password recovery router
-@router.post("/api/auth/password-recovery", status_code=200)
+@router.post("/api/account/password-recovery", status_code=200)
 async def password_recovery(request: PasswordRecoveryRequestSchema, db: Session = Depends(get_sqlite3_db)):
     """
     Reset the user's password if the email has been verified.
@@ -196,3 +196,32 @@ async def password_recovery(request: PasswordRecoveryRequestSchema, db: Session 
         return {"message": "Password reset successfully."}
     else:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email not verified.")
+
+# Change email router
+@router.post("/api/account/change-email", status_code=200)
+async def change_email(request: EmailChangeRequestSchema, current_user: User = Depends(get_current_user), db: Session = Depends(get_sqlite3_db)):
+    """
+    Change the user's email if the email has been verified.
+    """
+    old_email = request.old_email
+    new_email = request.new_email
+
+    # Check if the old email is correct
+    if old_email != current_user["email"]:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Old email is incorrect.")
+
+    user = db.query(User).filter(User.username == current_user["username"]).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    # Change the email if the new email is verified
+    if new_email in email_verification_status and email_verification_status[new_email]:
+        user.email = new_email
+        db.commit()
+        
+        # Invalidate the verification status
+        del email_verification_status[new_email]
+        return {"message": "Email changed successfully."}
+    else:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email not verified.")
+ 

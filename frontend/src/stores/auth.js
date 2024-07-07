@@ -57,7 +57,13 @@ function createAuthStore() {
                 return localStorage.getItem('email');
             }
             return null;
-        }
+        },
+        setEmail: (email) => {
+            // Set the email in the local storage
+            if (browser) {
+                localStorage.setItem('email', email);
+            }
+        },
     };
 }
 

@@ -1,5 +1,6 @@
 <!-- frontend/src/routes/accounts/user/settings/+page.svelte -->
 <script>
+	import { browser } from '$app/environment';
     import { Button, Label } from 'flowbite-svelte';
     import { auth } from '../../../../stores/auth';
     import { onMount } from 'svelte';
@@ -38,12 +39,16 @@
         }
     });
 
-    function handleChangeAlert() {
-        Swal.fire({
-            icon: 'info',
-            title: 'Change Feature',
-            text: 'This feature is not implemented yet.'
-        });
+    function changeEmailHandler() {
+        if (browser) {
+            location.href = '/accounts/change-email';
+        }
+    }
+
+    function changePasswordHandler() {
+        if (browser) {
+            location.href = '/accounts/change-password';
+        }
     }
 </script>
 
@@ -115,14 +120,14 @@
                 <Label for="email" class="mb-2">Email</Label>
                 <div class="info-group">
                     <span id="email" class="info-text">{user.email}</span>
-                    <button on:click={handleChangeAlert} class="info-button">Change</button>
+                    <button on:click={changeEmailHandler} class="info-button">Change</button>
                 </div>
             </div>
             <div>
                 <Label for="password" class="mb-2">Password</Label>
                 <div class="info-group">
                     <span id="password" class="info-text">{user.password}</span>
-                    <button on:click={handleChangeAlert} class="info-button">Change</button>
+                    <button on:click={changePasswordHandler} class="info-button">Change</button>
                 </div>
             </div>
         </div>

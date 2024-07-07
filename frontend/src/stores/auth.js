@@ -64,6 +64,16 @@ function createAuthStore() {
                 localStorage.setItem('email', email);
             }
         },
+        purge: () => {
+            // Remove all the user data from the local storage
+            if (browser) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('username');
+                localStorage.removeItem('uuid');
+                localStorage.removeItem('email');
+                set(false);
+            }
+        }
     };
 }
 

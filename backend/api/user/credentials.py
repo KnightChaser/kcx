@@ -4,7 +4,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile, Form
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
-from schemas import LoginSchema, UserRegistrationSchema, PasswordRecoveryRequestSchema, EmailChangeRequestSchema
+from schemas import LoginSchema, UserRegistrationSchema, PasswordRecoveryRequestSchema, EmailChangeRequestSchema, PasswordChangeRequestSchema
 from typing import Dict, Union
 from pathlib import Path
 import filetype
@@ -226,3 +226,24 @@ async def change_email(request: EmailChangeRequestSchema, current_user: User = D
     else:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email not verified.")
  
+# Change password router
+@router.post("/api/account/change-password", status_code=200)
+async def change_password(request: PasswordChangeRequestSchema, current_user: User = Depends(get_current_user), db: Session = Depends(get_sqlite3_db)):
+    """
+    Change the user's password
+    """
+    old_password = request.old_password
+    new_password = request.new_password
+
+    user = db.query(User).filter(User.username == current_user["username"]).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    # Check if the old password is correct
+    if not password_verify(old_password, user.password):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Old password is incorrect.")
+
+    # Hash the new password
+    user.password = password_hash(new_password)
+    db.commit()
+    return {"message": "Password changed successfully."}

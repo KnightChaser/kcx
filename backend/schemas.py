@@ -134,3 +134,10 @@ class EmailChangeRequestSchema(BaseModel):
     """
     old_email: EmailStr
     new_email: EmailStr
+
+class PasswordChangeRequestSchema(BaseModel):
+    """
+    User change password request schema
+    """
+    old_password: str
+    new_password: str

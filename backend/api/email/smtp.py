@@ -21,7 +21,7 @@ class SMTP:
         self.sender_email = "no_reply@kcx.knightchaser.com"
         self.console = Console()
 
-    def send_email(self, receiver_email, subject, body, purpose=None):
+    def send_email_for_email_verification(self, receiver_email, auth_code):
         """
         Send an email using the preregistered SMTP server
         """
@@ -29,11 +29,11 @@ class SMTP:
         msg = MIMEMultipart("alternative")
         msg['From'] = self.sender_email
         msg['To'] = receiver_email
-        msg['Subject'] = subject
+        msg['Subject'] = "[KCX] Email Verification"
 
         # Add both plain text and HTML versions
-        part1 = MIMEText(body, 'plain')
-        part2 = MIMEText(self.create_html_body(body), 'html')
+        part1 = MIMEText(auth_code, 'plain')
+        part2 = MIMEText(self.create_html_body_for_email_verification(auth_code), 'html')
 
         msg.attach(part1)
         msg.attach(part2)
@@ -46,13 +46,13 @@ class SMTP:
 
             # Send the email
             server.sendmail(from_addr=self.sender_email, to_addrs=receiver_email, msg=msg.as_string())
-            self.console.print(f"Email sent to {receiver_email} for {purpose} successfully")
+            self.console.print(f"Email sent to {receiver_email} for email verification.")
         except Exception as e:
             self.console.print(f"Error: {e}")
         finally:
             server.quit()  # Terminate the SMTP session
 
-    def create_html_body(self, body):
+    def create_html_body_for_email_verification(self, auth_code):
         """
         Create an HTML version of the email body.
         This is used to send emails with rich text formatting.
@@ -63,9 +63,9 @@ class SMTP:
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
                 <h2 style="color: #333;">KCX Email Verification</h2>
                 <p style="color: #555;">Thank you for using KCX. Please use the following code to verify your email address:</p>
-                <h3 style="color: #333; background-color: #f7f7f7; padding: 10px; border-radius: 5px; display: inline-block;">{body.split(": ")[1]}</h3>
+                <h3 style="color: #333; background-color: #f7f7f7; padding: 10px; border-radius: 5px; display: inline-block;">{auth_code}</h3>
                 <p style="color: #555;">If you did not request this verification, please ignore this email.</p>
-                <p style="color: #555;">Best regards, <br>KnightChaser</p>.
+                <p style="color: #555;">Best regards, <br><b>KnightChaser</b></p>
             </div>
         </body>
         </html>

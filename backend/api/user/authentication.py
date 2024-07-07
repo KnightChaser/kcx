@@ -52,12 +52,10 @@ async def send_verification_email(request: EmailVerificationRequest) -> Dict:
 
     # Create the SMTP instance
     smtp = SMTP()
-    subject = "Email Verification"
-    body = f"Your verification code is: {verification_code}"
 
     try:
         # Send the email
-        smtp.send_email(receiver_email=email, subject=subject, body=body, purpose="email verification")
+        smtp.send_email_for_email_verification(receiver_email=email, auth_code=verification_code)
         return {"message": "Verification email sent successfully."}
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to send email: {str(e)}")

@@ -208,6 +208,7 @@ async def change_email(request: EmailChangeRequestSchema, current_user: User = D
 
     # Check if the old email is correct
     if old_email != current_user["email"]:
+        print(f"Old email: {old_email}, Current email: {current_user['email']}")
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Old email is incorrect.")
 
     user = db.query(User).filter(User.username == current_user["username"]).first()

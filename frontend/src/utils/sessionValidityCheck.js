@@ -1,9 +1,10 @@
-// automaticLogout.js
+// frontend/src/utils/sessionValidityCheck.js
+
 // If the user is authenticated, this module will automatically log them out after a certain period of inactivity.
 // If the user runs out of session time, they will be redirected to the login page after receiving the message.
 
-import { push } from "svelte-spa-router";
-import { auth } from "../stores/auth";
+import { redirect } from "@sveltejs/kit";
+import { auth } from "../stores/auth.js";
 import Swal from "sweetalert2";
 
 // Decode the JWT token into a JSON object
@@ -20,7 +21,7 @@ function decodeJWT(token) {
 // Check the validity of the session, and log out the user if the session has expired
 export function sessionValidityCheck() {
     // Get the token from the local storage
-    const token = localStorage.getItem("token");
+    const token = auth.getToken();
     if (!token)
         console.error("Token not found in the local storage");
 
@@ -36,7 +37,7 @@ export function sessionValidityCheck() {
             confirmButtonText: "OK",
         });
         auth.logout();
-        push("/login");
+        redirect("/login");
         return;
     } else {
         // Set a timer to automatically log out the user when the token expires

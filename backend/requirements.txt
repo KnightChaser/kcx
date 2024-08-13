@@ -7,3 +7,4 @@ redis==5.0.4
 Requests==2.32.3
 rich==13.7.1
 SQLAlchemy==2.0.29
+filetype==1.2.0

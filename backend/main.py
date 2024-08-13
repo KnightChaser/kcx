@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 # API endpoints
+from api.user.authentication import router as authentication_router
 from api.user.credentials import router as user_router
 from api.user.balance import router as balance_router
 from api.user.existence_check import check_existence
@@ -142,6 +143,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Include all routers
+app.include_router(authentication_router)
 app.include_router(user_router)
 app.include_router(balance_router)
 app.include_router(market_router)

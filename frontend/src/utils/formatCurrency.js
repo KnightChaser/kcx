@@ -1,3 +1,5 @@
+// frontend/src/utils/formatCurrency.js
+
 export function formatCurrency(value) {
     if (Math.abs(value) >= 1000)
         // Without decimal places

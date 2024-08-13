@@ -2,8 +2,9 @@
 // Purchase cryptocurrency
 
 import axios from 'axios';
+import { auth } from '../../../stores/auth';
 
-const token = localStorage.getItem('token');
+const token = auth.getToken();
 const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL;
 
 export async function buyCryptocurrency(marketCode, amount) {

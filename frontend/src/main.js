@@ -1,8 +1,5 @@
-import './app.css'
-import App from './App.svelte'
+import { start } from "@sveltejs/kit";
 
-const app = new App({
-  target: document.getElementById('app'),
-})
-
-export default app
+start({
+    target: document.body
+});

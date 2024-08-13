@@ -4,3 +4,4 @@ kcx.db
 *.db-journal
 database
 data
+.secrets*

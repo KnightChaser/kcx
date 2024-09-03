@@ -26,7 +26,11 @@
 
 ## A Free-From-Risk cryptocurrency exchange simulation web application
 
-You can try KCX at **[https://kcx.knightchaser.com/](https://kcx.knightchaser.com/)**, which is hosted via AWS Lightsail by the repository owner. Note that the specifications, service status, and other things might be changed depending on the development contexts and situations. (Try only for fun! :D)
+~~You can try KCX at **[https://kcx.knightchaser.com/](https://kcx.knightchaser.com/)**, hosted via AWS Lightsail by the repository owner. Note that the specifications, service status, and other things might be changed depending on the development contexts and situations. (Try only for fun! :D)~~
+
+## Notice of public service discontinuation
+
+The KCX service on the AWS LightSail **has been discontinued since Sep. 3, 2024** due to financial issues. During the services with 87 days, 3,566 transactions worth 16.7 trillion KRW(12.525 billion US$) were made(If all money in the services were REAL). Thanks for loving this project, my first attempt to make a modern website!
 
 ## Service environmental variables
 Currently, there are environment variables to set up the services as you need. Read the next chapter(`Deployment`) for complete contextual information.
